@@ -1,0 +1,1791 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>English Learning Quiz</title>
+    <style>
+        /* Reset some basic styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f8ff;
+            display: flex;
+            min-height: 100vh;
+            margin: 0;
+            padding: 0;
+        }
+
+        .sidebar {
+            width: 220px;
+            background-color: #2c3e50;
+            color: #ecf0f1;
+            padding: 20px;
+            flex-shrink: 0;
+        }
+
+        .sidebar h2 {
+            margin-bottom: 20px;
+            text-align: center;
+            font-size: 1.5em;
+        }
+
+        .sidebar ul {
+            list-style: none;
+        }
+
+        .sidebar li {
+            margin-bottom: 15px;
+        }
+
+        .lesson-button {
+            width: 100%;
+            padding: 12px;
+            background-color: #34495e;
+            border: none;
+            color: #ecf0f1;
+            cursor: pointer;
+            border-radius: 5px;
+            transition: background-color 0.3s, transform 0.2s;
+            font-size: 1em;
+        }
+
+        .lesson-button:hover {
+            background-color: #3d566e;
+            transform: translateY(-2px);
+        }
+
+        .lesson-button.active {
+            background-color: #1abc9c;
+            transform: translateY(-2px);
+        }
+
+        .main-content {
+            flex: 1;
+            padding: 20px;
+            background-color: #ecf0f1;
+            overflow-y: auto;
+        }
+
+        .quiz-container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .slide {
+            text-align: center;
+            display: none; /* All slides hidden by default */
+        }
+
+        .slide.active {
+            display: block; /* Active slide is visible */
+        }
+
+        h2 {
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        .images-container, .options-container, .color-options, .letter-options {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin: 20px 0;
+        }
+
+        .option, .color-block, .letter-option {
+            width: 150px;
+            height: 150px;
+            margin: 10px;
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: transform 0.2s, border-color 0.2s;
+            object-fit: cover;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2em;
+            color: #fff;
+        }
+
+        /* Make color blocks larger and more visible */
+        .color-palette {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            justify-items: center;
+        }
+
+        .color-block {
+            width: 180px;
+            height: 180px;
+            border: 3px solid #333;
+            border-radius: 15px;
+            font-size: 1.5em;
+            margin: 15px;
+            transition: transform 0.3s, border-color 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            color: #fff;
+            text-shadow: 1px 1px 2px #000;
+        }
+
+        .color-block:hover {
+            transform: scale(1.1);
+            border-color: #1abc9c;
+        }
+
+        /* Make letters in the Alphabet lesson more prominent */
+        .letter-option {
+            background-color: #1abc9c;
+            font-size: 4em;
+            color: #fff;
+            border: 3px solid #333;
+            border-radius: 10px;
+            transition: transform 0.2s, border-color 0.2s;
+        }
+
+        .letter-option:hover {
+            transform: scale(1.1);
+            border-color: #2ecc71;
+        }
+
+        .feedback {
+            color: red;
+            font-weight: bold;
+            height: 20px;
+            margin-top: 10px;
+        }
+
+        .question-image {
+            width: 150px;
+            height: auto;
+            margin-bottom: 20px;
+        }
+
+        .congrats-image {
+            width: 300px;
+            height: auto;
+            margin-top: 20px;
+        }
+
+        .number-options button {
+            width: 100px;
+            height: 100px;
+            margin: 10px;
+            font-size: 2em;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            background-color: #34495e;
+            color: #ecf0f1;
+            transition: background-color 0.3s, transform 0.2s;
+        }
+
+        .number-options button:hover {
+            background-color: #3d566e;
+            transform: translateY(-2px);
+        }
+
+        /* Additional Styles for Alphabet Lesson */
+        .big-letter {
+            font-size: 5em;
+            color: #1abc9c;
+        }
+
+        /* SVG Shape Styles */
+        .svg-shape {
+            width: 100px;
+            height: 100px;
+            cursor: pointer;
+            transition: transform 0.2s, border-color 0.2s;
+        }
+
+        .svg-shape:hover {
+            transform: scale(1.1);
+            /* Optionally, add border-color or other effects */
+        }
+
+        /* New Class for Correct Selection */
+        .option.selected-correct {
+            transform: scale(1.1); /* Zoom effect */
+            border: 3px solid green; /* Green border */
+        }
+
+        .letter-option.selected-correct {
+            transform: scale(1.1); /* Zoom effect */
+            border-color: green; /* Green border */
+        }
+
+        .color-block.selected-correct {
+            transform: scale(1.1); /* Zoom effect */
+            border-color: green; /* Green border */
+        }
+
+        .number-options button.selected-correct {
+            background-color: green;
+        }
+
+        .svg-shape.selected-correct {
+            stroke: green;
+            stroke-width: 4;
+        }
+
+        /* Disable options after selection */
+        .option.disabled, .letter-option.disabled, .color-block.disabled, .number-options button.disabled, .svg-shape.disabled {
+            pointer-events: none;
+            opacity: 0.6;
+        }
+
+        /* Additional Styles for Buttons in Colors Lesson */
+        .color-button {
+        background-color: #3498db;
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        margin: 10px 5px 0 0;
+        cursor: pointer;
+        border-radius: 5px;
+        font-size: 16px;
+    }
+
+    .color-button:hover {
+        background-color: #2980b9;
+    }
+
+    /* Ensure both buttons are aligned horizontally */
+    .final-slide button {
+        display: inline-block;
+    }
+
+        /* Mobile Optimization */
+        @media (max-width: 768px) {
+            body {
+                flex-direction: column;
+            }
+
+            .sidebar {
+                display: none;
+            }
+
+            .main-content {
+                width: 100%;
+                padding: 10px;
+            }
+
+            .images-container, .options-container, .color-options, .letter-options, .color-palette {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .option, .color-block, .letter-option {
+                width: 80%;
+                max-width: 300px;
+                height: auto;
+                font-size: 1.5em;
+                margin: 10px 0;
+            }
+
+            .color-block {
+                width: 80%;
+                max-width: 300px;
+                height: auto;
+                font-size: 1.2em;
+                margin: 10px 0;
+            }
+
+            .letter-option {
+                font-size: 3em;
+                width: 80%;
+                max-width: 300px;
+                height: auto;
+            }
+
+            .number-options button {
+                width: 80%;
+                max-width: 300px;
+                height: auto;
+                font-size: 1.5em;
+                margin: 10px 0;
+            }
+
+            .question-image {
+                width: 80%;
+                max-width: 300px;
+                height: auto;
+            }
+
+            .congrats-image {
+                width: 80%;
+                max-width: 300px;
+                height: auto;
+            }
+
+            h2 {
+                font-size: 1.5em;
+            }
+        }
+        #lessons {
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <!-- Sidebar for Lesson Selection -->
+    <div class="sidebar">
+        <h2 id="lessons">Lessons</h2>
+        <ul>
+                        <li><button class="lesson-button" onclick="selectLesson('animals')">Animals</button></li>
+
+            <li><button class="lesson-button" onclick="selectLesson('vegetables')">Vegetables</button></li>
+            <li><button class="lesson-button" onclick="selectLesson('fruits')">Fruits</button></li>
+            <li><button class="lesson-button" onclick="selectLesson('colors')">Colors</button></li>
+            <li><button class="lesson-button" onclick="selectLesson('numbers')">Numbers</button></li>
+            <li><button class="lesson-button" onclick="selectLesson('shapes')">Shapes</button></li>
+            <li><button class="lesson-button" onclick="selectLesson('alphabet')">Alphabet</button></li>
+            <li><button class="lesson-button" onclick="selectLesson('emotions')">Emotions</button></li>
+            <li><button class="lesson-button" onclick="selectLesson('vehicles')">Vehicles</button></li>
+
+            <!-- Removed Vehicles and Opposites buttons -->
+        </ul>
+    </div>
+
+    <!-- Main Content Area -->
+    <div class="main-content">
+        <div class="quiz-container" id="quiz-container">
+            <!-- Fruits Slides -->
+            <div class="lesson" id="fruits" style="display: none;">
+                <!-- Slide 1 -->
+                <div class="slide" id="fruits-slide-1">
+                    <img src="images/question.png" alt="Question" class="question-image">
+                    <h2>Choose the Apple</h2>
+                    <div class="images-container">
+                        <img src="images/apple.webp" alt="Apple" class="option correct" onclick="selectOption('fruits', 1, true, 'Apple', this)">
+                        <img src="images/banana.webp" alt="Banana" class="option" onclick="selectOption('fruits', 1, false, 'Banana', this)">
+                        <img src="images/pear.webp" alt="Pear" class="option" onclick="selectOption('fruits', 1, false, 'Pear', this)">
+                        <img src="images/coconut.webp" alt="Coconut" class="option" onclick="selectOption('fruits', 1, false, 'Coconut', this)">
+                        <img src="images/mango.webp" alt="Mango" class="option" onclick="selectOption('fruits', 1, false, 'Mango', this)">
+                        <img src="images/orange.webp" alt="Orange" class="option" onclick="selectOption('fruits', 1, false, 'Orange', this)">
+                        <img src="images/grape.webp" alt="Grape" class="option" onclick="selectOption('fruits', 1, false, 'Grape', this)">
+                        <img src="images/pineapple.webp" alt="Pineapple" class="option" onclick="selectOption('fruits', 1, false, 'Pineapple', this)">
+                        <img src="images/kiwi.webp" alt="Kiwi" class="option" onclick="selectOption('fruits', 1, false, 'Kiwi', this)">
+                    </div>
+                    <p class="feedback" id="fruits-feedback-1"></p>
+                </div>
+
+                <!-- Slide 2 -->
+                <div class="slide" id="fruits-slide-2">
+                    <img src="images/question.png" alt="Question" class="question-image">
+                    <h2>Choose the Banana</h2>
+                    <div class="images-container">
+                        <img src="images/apple.webp" alt="Apple" class="option" onclick="selectOption('fruits', 2, false, 'Apple', this)">
+                        <img src="images/banana.webp" alt="Banana" class="option correct" onclick="selectOption('fruits', 2, true, 'Banana', this)">
+                        <img src="images/pear.webp" alt="Pear" class="option" onclick="selectOption('fruits', 2, false, 'Pear', this)">
+                        <img src="images/coconut.webp" alt="Coconut" class="option" onclick="selectOption('fruits', 2, false, 'Coconut', this)">
+                        <img src="images/mango.webp" alt="Mango" class="option" onclick="selectOption('fruits', 2, false, 'Mango', this)">
+                        <img src="images/orange.webp" alt="Orange" class="option" onclick="selectOption('fruits', 2, false, 'Orange', this)">
+                        <img src="images/grape.webp" alt="Grape" class="option" onclick="selectOption('fruits', 2, false, 'Grape', this)">
+                        <img src="images/pineapple.webp" alt="Pineapple" class="option" onclick="selectOption('fruits', 2, false, 'Pineapple', this)">
+                        <img src="images/kiwi.webp" alt="Kiwi" class="option" onclick="selectOption('fruits', 2, false, 'Kiwi', this)">
+                    </div>
+                    <p class="feedback" id="fruits-feedback-2"></p>
+                </div>
+
+                <!-- Slide 3 -->
+                <div class="slide" id="fruits-slide-3">
+                    <img src="images/question.png" alt="Question" class="question-image">
+                    <h2>Choose the Pear</h2>
+                    <div class="images-container">
+                        <img src="images/apple.webp" alt="Apple" class="option" onclick="selectOption('fruits', 3, false, 'Apple', this)">
+                        <img src="images/banana.webp" alt="Banana" class="option" onclick="selectOption('fruits', 3, false, 'Banana', this)">
+                        <img src="images/pear.webp" alt="Pear" class="option correct" onclick="selectOption('fruits', 3, true, 'Pear', this)">
+                        <img src="images/coconut.webp" alt="Coconut" class="option" onclick="selectOption('fruits', 3, false, 'Coconut', this)">
+                        <img src="images/mango.webp" alt="Mango" class="option" onclick="selectOption('fruits', 3, false, 'Mango', this)">
+                        <img src="images/orange.webp" alt="Orange" class="option" onclick="selectOption('fruits', 3, false, 'Orange', this)">
+                        <img src="images/grape.webp" alt="Grape" class="option" onclick="selectOption('fruits', 3, false, 'Grape', this)">
+                        <img src="images/pineapple.webp" alt="Pineapple" class="option" onclick="selectOption('fruits', 3, false, 'Pineapple', this)">
+                        <img src="images/kiwi.webp" alt="Kiwi" class="option" onclick="selectOption('fruits', 3, false, 'Kiwi', this)">
+                    </div>
+                    <p class="feedback" id="fruits-feedback-3"></p>
+                </div>
+
+                <!-- Slide 4 -->
+                <div class="slide" id="fruits-slide-4">
+                    <img src="images/question.png" alt="Question" class="question-image">
+                    <h2>Choose the Coconut</h2>
+                    <div class="images-container">
+                        <img src="images/apple.webp" alt="Apple" class="option" onclick="selectOption('fruits', 4, false, 'Apple', this)">
+                        <img src="images/banana.webp" alt="Banana" class="option" onclick="selectOption('fruits', 4, false, 'Banana', this)">
+                        <img src="images/pear.webp" alt="Pear" class="option" onclick="selectOption('fruits', 4, false, 'Pear', this)">
+                        <img src="images/coconut.webp" alt="Coconut" class="option correct" onclick="selectOption('fruits', 4, true, 'Coconut', this)">
+                        <img src="images/mango.webp" alt="Mango" class="option" onclick="selectOption('fruits', 4, false, 'Mango', this)">
+                        <img src="images/orange.webp" alt="Orange" class="option" onclick="selectOption('fruits', 4, false, 'Orange', this)">
+                        <img src="images/grape.webp" alt="Grape" class="option" onclick="selectOption('fruits', 4, false, 'Grape', this)">
+                        <img src="images/pineapple.webp" alt="Pineapple" class="option" onclick="selectOption('fruits', 4, false, 'Pineapple', this)">
+                        <img src="images/kiwi.webp" alt="Kiwi" class="option" onclick="selectOption('fruits', 4, false, 'Kiwi', this)">
+                    </div>
+                    <p class="feedback" id="fruits-feedback-4"></p>
+                </div>
+
+                <!-- Slide 5 -->
+                <div class="slide" id="fruits-slide-5">
+                    <img src="images/question.png" alt="Question" class="question-image">
+                    <h2>Choose the Mango</h2>
+                    <div class="images-container">
+                        <img src="images/apple.webp" alt="Apple" class="option" onclick="selectOption('fruits', 5, false, 'Apple', this)">
+                        <img src="images/banana.webp" alt="Banana" class="option" onclick="selectOption('fruits', 5, false, 'Banana', this)">
+                        <img src="images/pear.webp" alt="Pear" class="option" onclick="selectOption('fruits', 5, false, 'Pear', this)">
+                        <img src="images/coconut.webp" alt="Coconut" class="option" onclick="selectOption('fruits', 5, false, 'Coconut', this)">
+                        <img src="images/mango.webp" alt="Mango" class="option correct" onclick="selectOption('fruits', 5, true, 'Mango', this)">
+                        <img src="images/orange.webp" alt="Orange" class="option" onclick="selectOption('fruits', 5, false, 'Orange', this)">
+                        <img src="images/grape.webp" alt="Grape" class="option" onclick="selectOption('fruits', 5, false, 'Grape', this)">
+                        <img src="images/pineapple.webp" alt="Pineapple" class="option" onclick="selectOption('fruits', 5, false, 'Pineapple', this)">
+                        <img src="images/kiwi.webp" alt="Kiwi" class="option" onclick="selectOption('fruits', 5, false, 'Kiwi', this)">
+                    </div>
+                    <p class="feedback" id="fruits-feedback-5"></p>
+                </div>
+
+                <!-- Slide 6 -->
+                <div class="slide" id="fruits-slide-6">
+                    <img src="images/question.png" alt="Question" class="question-image">
+                    <h2>Choose the Orange</h2>
+                    <div class="images-container">
+                        <img src="images/apple.webp" alt="Apple" class="option" onclick="selectOption('fruits', 6, false, 'Apple', this)">
+                        <img src="images/banana.webp" alt="Banana" class="option" onclick="selectOption('fruits', 6, false, 'Banana', this)">
+                        <img src="images/pear.webp" alt="Pear" class="option" onclick="selectOption('fruits', 6, false, 'Pear', this)">
+                        <img src="images/coconut.webp" alt="Coconut" class="option" onclick="selectOption('fruits', 6, false, 'Coconut', this)">
+                        <img src="images/mango.webp" alt="Mango" class="option" onclick="selectOption('fruits', 6, false, 'Mango', this)">
+                        <img src="images/orange.webp" alt="Orange" class="option correct" onclick="selectOption('fruits', 6, true, 'Orange', this)">
+                        <img src="images/grape.webp" alt="Grape" class="option" onclick="selectOption('fruits', 6, false, 'Grape', this)">
+                        <img src="images/pineapple.webp" alt="Pineapple" class="option" onclick="selectOption('fruits', 6, false, 'Pineapple', this)">
+                        <img src="images/kiwi.webp" alt="Kiwi" class="option" onclick="selectOption('fruits', 6, false, 'Kiwi', this)">
+                    </div>
+                    <p class="feedback" id="fruits-feedback-6"></p>
+                </div>
+
+                <!-- Slide 7 -->
+                <div class="slide" id="fruits-slide-7">
+                    <img src="images/question.png" alt="Question" class="question-image">
+                    <h2>Choose the Grape</h2>
+                    <div class="images-container">
+                        <img src="images/apple.webp" alt="Apple" class="option" onclick="selectOption('fruits', 7, false, 'Apple', this)">
+                        <img src="images/banana.webp" alt="Banana" class="option" onclick="selectOption('fruits', 7, false, 'Banana', this)">
+                        <img src="images/pear.webp" alt="Pear" class="option" onclick="selectOption('fruits', 7, false, 'Pear', this)">
+                        <img src="images/coconut.webp" alt="Coconut" class="option" onclick="selectOption('fruits', 7, false, 'Coconut', this)">
+                        <img src="images/mango.webp" alt="Mango" class="option" onclick="selectOption('fruits', 7, false, 'Mango', this)">
+                        <img src="images/orange.webp" alt="Orange" class="option" onclick="selectOption('fruits', 7, false, 'Orange', this)">
+                        <img src="images/grape.webp" alt="Grape" class="option correct" onclick="selectOption('fruits', 7, true, 'Grape', this)">
+                        <img src="images/pineapple.webp" alt="Pineapple" class="option" onclick="selectOption('fruits', 7, false, 'Pineapple', this)">
+                        <img src="images/kiwi.webp" alt="Kiwi" class="option" onclick="selectOption('fruits', 7, false, 'Kiwi', this)">
+                    </div>
+                    <p class="feedback" id="fruits-feedback-7"></p>
+                </div>
+
+                <!-- Slide 8 -->
+                <div class="slide" id="fruits-slide-8">
+                    <img src="images/question.png" alt="Question" class="question-image">
+                    <h2>Choose the Pineapple</h2>
+                    <div class="images-container">
+                        <img src="images/apple.webp" alt="Apple" class="option" onclick="selectOption('fruits', 8, false, 'Apple', this)">
+                        <img src="images/banana.webp" alt="Banana" class="option" onclick="selectOption('fruits', 8, false, 'Banana', this)">
+                        <img src="images/pear.webp" alt="Pear" class="option" onclick="selectOption('fruits', 8, false, 'Pear', this)">
+                        <img src="images/coconut.webp" alt="Coconut" class="option" onclick="selectOption('fruits', 8, false, 'Coconut', this)">
+                        <img src="images/mango.webp" alt="Mango" class="option" onclick="selectOption('fruits', 8, false, 'Mango', this)">
+                        <img src="images/orange.webp" alt="Orange" class="option" onclick="selectOption('fruits', 8, false, 'Orange', this)">
+                        <img src="images/grape.webp" alt="Grape" class="option" onclick="selectOption('fruits', 8, false, 'Grape', this)">
+                        <img src="images/pineapple.webp" alt="Pineapple" class="option correct" onclick="selectOption('fruits', 8, true, 'Pineapple', this)">
+                        <img src="images/kiwi.webp" alt="Kiwi" class="option" onclick="selectOption('fruits', 8, false, 'Kiwi', this)">
+                    </div>
+                    <p class="feedback" id="fruits-feedback-8"></p>
+                </div>
+
+                <!-- Slide 9 -->
+                <div class="slide" id="fruits-slide-9">
+                    <img src="images/question.png" alt="Question" class="question-image">
+                    <h2>Choose the Kiwi</h2>
+                    <div class="images-container">
+                        <img src="images/apple.webp" alt="Apple" class="option" onclick="selectOption('fruits', 9, false, 'Apple', this)">
+                        <img src="images/banana.webp" alt="Banana" class="option" onclick="selectOption('fruits', 9, false, 'Banana', this)">
+                        <img src="images/pear.webp" alt="Pear" class="option" onclick="selectOption('fruits', 9, false, 'Pear', this)">
+                        <img src="images/coconut.webp" alt="Coconut" class="option" onclick="selectOption('fruits', 9, false, 'Coconut', this)">
+                        <img src="images/mango.webp" alt="Mango" class="option" onclick="selectOption('fruits', 9, false, 'Mango', this)">
+                        <img src="images/orange.webp" alt="Orange" class="option" onclick="selectOption('fruits', 9, false, 'Orange', this)">
+                        <img src="images/grape.webp" alt="Grape" class="option" onclick="selectOption('fruits', 9, false, 'Grape', this)">
+                        <img src="images/pineapple.webp" alt="Pineapple" class="option" onclick="selectOption('fruits', 9, false, 'Pineapple', this)">
+                        <img src="images/kiwi.webp" alt="Kiwi" class="option correct" onclick="selectOption('fruits', 9, true, 'Kiwi', this)">
+                    </div>
+                    <p class="feedback" id="fruits-feedback-9"></p>
+                </div>
+
+                <!-- Final Slide -->
+                <div class="slide final-slide" id="fruits-final-slide">
+                    <h2>Job Well Done!</h2>
+                    <img src="images/success.png" alt="Congratulations" class="congrats-image">
+                    <button class="color-button" onclick="selectLesson('fruits')">Restart Lesson</button>
+                </div>
+            </div>
+
+            <!-- Vegetables Slides -->
+            <div class="lesson" id="vegetables" style="display: none;">
+                <!-- Slide 1 -->
+                <div class="slide" id="vegetables-slide-1">
+                    <img src="images/question.png" alt="Question" class="question-image">
+                    <h2>Choose the Carrot</h2>
+                    <div class="images-container">
+                        <img src="images/carrot.webp" alt="Carrot" class="option correct" onclick="selectOption('vegetables', 1, true, 'Carrot', this)">
+                        <img src="images/broccoli.webp" alt="Broccoli" class="option" onclick="selectOption('vegetables', 1, false, 'Broccoli', this)">
+                        <img src="images/potato.webp" alt="Potato" class="option" onclick="selectOption('vegetables', 1, false, 'Potato', this)">
+                        <img src="images/tomato.webp" alt="Tomato" class="option" onclick="selectOption('vegetables', 1, false, 'Tomato', this)">
+                        <img src="images/onion.webp" alt="Onion" class="option" onclick="selectOption('vegetables', 1, false, 'Onion', this)">
+                        <img src="images/cucumber.webp" alt="Cucumber" class="option" onclick="selectOption('vegetables', 1, false, 'Cucumber', this)">
+                        <img src="images/pepper.webp" alt="Pepper" class="option" onclick="selectOption('vegetables', 1, false, 'Pepper', this)">
+                    </div>
+                    <p class="feedback" id="vegetables-feedback-1"></p>
+                </div>
+
+                <!-- Slide 2 -->
+                <div class="slide" id="vegetables-slide-2">
+                    <img src="images/question.png" alt="Question" class="question-image">
+                    <h2>Choose the Broccoli</h2>
+                    <div class="images-container">
+                        <img src="images/carrot.webp" alt="Carrot" class="option" onclick="selectOption('vegetables', 2, false, 'Carrot', this)">
+                        <img src="images/broccoli.webp" alt="Broccoli" class="option correct" onclick="selectOption('vegetables', 2, true, 'Broccoli', this)">
+                        <img src="images/potato.webp" alt="Potato" class="option" onclick="selectOption('vegetables', 2, false, 'Potato', this)">
+                        <img src="images/tomato.webp" alt="Tomato" class="option" onclick="selectOption('vegetables', 2, false, 'Tomato', this)">
+                        <img src="images/onion.webp" alt="Onion" class="option" onclick="selectOption('vegetables', 2, false, 'Onion', this)">
+                        <img src="images/cucumber.webp" alt="Cucumber" class="option" onclick="selectOption('vegetables', 2, false, 'Cucumber', this)">
+                        <img src="images/pepper.webp" alt="Pepper" class="option" onclick="selectOption('vegetables', 2, false, 'Pepper', this)">
+                    </div>
+                    <p class="feedback" id="vegetables-feedback-2"></p>
+                </div>
+
+                <!-- Slide 3 -->
+                <div class="slide" id="vegetables-slide-3">
+                    <img src="images/question.png" alt="Question" class="question-image">
+                    <h2>Choose the Potato</h2>
+                    <div class="images-container">
+                        <img src="images/carrot.webp" alt="Carrot" class="option" onclick="selectOption('vegetables', 3, false, 'Carrot', this)">
+                        <img src="images/broccoli.webp" alt="Broccoli" class="option" onclick="selectOption('vegetables', 3, false, 'Broccoli', this)">
+                        <img src="images/potato.webp" alt="Potato" class="option correct" onclick="selectOption('vegetables', 3, true, 'Potato', this)">
+                        <img src="images/tomato.webp" alt="Tomato" class="option" onclick="selectOption('vegetables', 3, false, 'Tomato', this)">
+                        <img src="images/onion.webp" alt="Onion" class="option" onclick="selectOption('vegetables', 3, false, 'Onion', this)">
+                        <img src="images/cucumber.webp" alt="Cucumber" class="option" onclick="selectOption('vegetables', 3, false, 'Cucumber', this)">
+                        <img src="images/pepper.webp" alt="Pepper" class="option" onclick="selectOption('vegetables', 3, false, 'Pepper', this)">
+                    </div>
+                    <p class="feedback" id="vegetables-feedback-3"></p>
+                </div>
+
+                <!-- Slide 4 -->
+                <div class="slide" id="vegetables-slide-4">
+                    <img src="images/question.png" alt="Question" class="question-image">
+                    <h2>Choose the Tomato</h2>
+                    <div class="images-container">
+                        <img src="images/carrot.webp" alt="Carrot" class="option" onclick="selectOption('vegetables', 4, false, 'Carrot', this)">
+                        <img src="images/broccoli.webp" alt="Broccoli" class="option" onclick="selectOption('vegetables', 4, false, 'Broccoli', this)">
+                        <img src="images/potato.webp" alt="Potato" class="option" onclick="selectOption('vegetables', 4, false, 'Potato', this)">
+                        <img src="images/tomato.webp" alt="Tomato" class="option correct" onclick="selectOption('vegetables', 4, true, 'Tomato', this)">
+                        <img src="images/onion.webp" alt="Onion" class="option" onclick="selectOption('vegetables', 4, false, 'Onion', this)">
+                        <img src="images/cucumber.webp" alt="Cucumber" class="option" onclick="selectOption('vegetables', 4, false, 'Cucumber', this)">
+                        <img src="images/pepper.webp" alt="Pepper" class="option" onclick="selectOption('vegetables', 4, false, 'Pepper', this)">
+                    </div>
+                    <p class="feedback" id="vegetables-feedback-4"></p>
+                </div>
+
+                <!-- Slide 5 -->
+                <div class="slide" id="vegetables-slide-5">
+                    <img src="images/question.png" alt="Question" class="question-image">
+                    <h2>Choose the Onion</h2>
+                    <div class="images-container">
+                        <img src="images/carrot.webp" alt="Carrot" class="option" onclick="selectOption('vegetables', 5, false, 'Carrot', this)">
+                        <img src="images/broccoli.webp" alt="Broccoli" class="option" onclick="selectOption('vegetables', 5, false, 'Broccoli', this)">
+                        <img src="images/potato.webp" alt="Potato" class="option" onclick="selectOption('vegetables', 5, false, 'Potato', this)">
+                        <img src="images/tomato.webp" alt="Tomato" class="option" onclick="selectOption('vegetables', 5, false, 'Tomato', this)">
+                        <img src="images/onion.webp" alt="Onion" class="option correct" onclick="selectOption('vegetables', 5, true, 'Onion', this)">
+                        <img src="images/cucumber.webp" alt="Cucumber" class="option" onclick="selectOption('vegetables', 5, false, 'Cucumber', this)">
+                        <img src="images/pepper.webp" alt="Pepper" class="option" onclick="selectOption('vegetables', 5, false, 'Pepper', this)">
+                    </div>
+                    <p class="feedback" id="vegetables-feedback-5"></p>
+                </div>
+
+                <!-- Slide 6 -->
+                <div class="slide" id="vegetables-slide-6">
+                    <img src="images/question.png" alt="Question" class="question-image">
+                    <h2>Choose the Cucumber</h2>
+                    <div class="images-container">
+                        <img src="images/carrot.webp" alt="Carrot" class="option" onclick="selectOption('vegetables', 6, false, 'Carrot', this)">
+                        <img src="images/broccoli.webp" alt="Broccoli" class="option" onclick="selectOption('vegetables', 6, false, 'Broccoli', this)">
+                        <img src="images/potato.webp" alt="Potato" class="option" onclick="selectOption('vegetables', 6, false, 'Potato', this)">
+                        <img src="images/tomato.webp" alt="Tomato" class="option" onclick="selectOption('vegetables', 6, false, 'Tomato', this)">
+                        <img src="images/onion.webp" alt="Onion" class="option" onclick="selectOption('vegetables', 6, false, 'Onion', this)">
+                        <img src="images/cucumber.webp" alt="Cucumber" class="option correct" onclick="selectOption('vegetables', 6, true, 'Cucumber', this)">
+                        <img src="images/pepper.webp" alt="Pepper" class="option" onclick="selectOption('vegetables', 6, false, 'Pepper', this)">
+                    </div>
+                    <p class="feedback" id="vegetables-feedback-6"></p>
+                </div>
+
+   
+                                               <div class="slide" id="vegetables-slide-7">
+                    <img src="images/question.png" alt="Question" class="question-image">
+                    <h2>Choose the Pepper</h2>
+                    <div class="images-container">
+                        <img src="images/carrot.webp" alt="Carrot" class="option" onclick="selectOption('vegetables', 7, false, 'Carrot', this)">
+                        <img src="images/broccoli.webp" alt="Broccoli" class="option" onclick="selectOption('vegetables', 7, false, 'Broccoli', this)">
+                        <img src="images/potato.webp" alt="Potato" class="option" onclick="selectOption('vegetables', 7, false, 'Potato', this)">
+                        <img src="images/tomato.webp" alt="Tomato" class="option" onclick="selectOption('vegetables', 7, false, 'Tomato', this)">
+                        <img src="images/onion.webp" alt="Onion" class="option" onclick="selectOption('vegetables', 7, false, 'Onion', this)">
+                        <img src="images/cucumber.webp" alt="Cucumber" class="option correct" onclick="selectOption('vegetables', 7, false, 'Cucumber', this)">
+                        <img src="images/pepper.webp" alt="Pepper" class="option" onclick="selectOption('vegetables', 7, true, 'Pepper', this)">
+                    </div>
+                    <p class="feedback" id="vegetables-feedback-7"></p>
+                </div>
+       
+
+
+                <!-- Final Slide -->
+                <div class="slide final-slide" id="vegetables-final-slide">
+                    <h2>Job Well Done!</h2>
+                    <img src="images/success.png" alt="Congratulations" class="congrats-image">
+                    <button class="color-button" onclick="selectLesson('vegetables')">Restart Lesson</button>
+                </div>
+            </div>
+
+            <!-- Animals Slides -->
+            <div class="lesson" id="animals" style="display: none;">
+                <!-- Slide 1 -->
+                <div class="slide" id="animals-slide-1">
+                    <img src="images/question.png" alt="Question" class="question-image">
+                    <h2>Choose the Lion</h2>
+                    <div class="images-container">
+                        <img src="images/lion.webp" alt="Lion" class="option correct" onclick="selectOption('animals', 1, true, 'Lion', this)">
+                        <img src="images/elephant.webp" alt="Elephant" class="option" onclick="selectOption('animals', 1, false, 'Elephant', this)">
+                        <img src="images/giraffe.webp" alt="Giraffe" class="option" onclick="selectOption('animals', 1, false, 'Giraffe', this)">
+                        <img src="images/zebra.webp" alt="Zebra" class="option" onclick="selectOption('animals', 1, false, 'Zebra', this)">
+                        <img src="images/monkey.webp" alt="Monkey" class="option" onclick="selectOption('animals', 1, false, 'Monkey', this)">
+                        <img src="images/bird.webp" alt="Bird" class="option" onclick="selectOption('animals', 1, false, 'Bird', this)">
+                        <img src="images/cat.webp" alt="Cat" class="option" onclick="selectOption('animals', 1, false, 'Cat', this)">
+                        <img src="images/dog.webp" alt="Dog" class="option" onclick="selectOption('animals', 1, false, 'Dog', this)">
+                        <img src="images/fish.webp" alt="Fish" class="option" onclick="selectOption('animals', 1, false, 'Fish', this)">
+                    </div>
+                    <p class="feedback" id="animals-feedback-1"></p>
+                </div>
+
+                <!-- Slide 2 -->
+                <div class="slide" id="animals-slide-2">
+                    <img src="images/question.png" alt="Question" class="question-image">
+                    <h2>Choose the Elephant</h2>
+                    <div class="images-container">
+                        <img src="images/lion.webp" alt="Lion" class="option" onclick="selectOption('animals', 2, false, 'Lion', this)">
+                        <img src="images/elephant.webp" alt="Elephant" class="option correct" onclick="selectOption('animals', 2, true, 'Elephant', this)">
+                        <img src="images/giraffe.webp" alt="Giraffe" class="option" onclick="selectOption('animals', 2, false, 'Giraffe', this)">
+                        <img src="images/zebra.webp" alt="Zebra" class="option" onclick="selectOption('animals', 2, false, 'Zebra', this)">
+                        <img src="images/monkey.webp" alt="Monkey" class="option" onclick="selectOption('animals', 2, false, 'Monkey', this)">
+                        <img src="images/bird.webp" alt="Bird" class="option" onclick="selectOption('animals', 2, false, 'Bird', this)">
+                        <img src="images/cat.webp" alt="Cat" class="option" onclick="selectOption('animals', 2, false, 'Cat', this)">
+                        <img src="images/dog.webp" alt="Dog" class="option" onclick="selectOption('animals', 2, false, 'Dog', this)">
+                        <img src="images/fish.webp" alt="Fish" class="option correct" onclick="selectOption('animals', 2, true, 'Fish', this)">
+                    </div>
+                    <p class="feedback" id="animals-feedback-2"></p>
+                </div>
+
+                <!-- Slide 3 -->
+                <div class="slide" id="animals-slide-3">
+                    <img src="images/question.png" alt="Question" class="question-image">
+                    <h2>Choose the Giraffe</h2>
+                    <div class="images-container">
+                        <img src="images/lion.webp" alt="Lion" class="option" onclick="selectOption('animals', 3, false, 'Lion', this)">
+                        <img src="images/elephant.webp" alt="Elephant" class="option" onclick="selectOption('animals', 3, false, 'Elephant', this)">
+                        <img src="images/giraffe.webp" alt="Giraffe" class="option correct" onclick="selectOption('animals', 3, true, 'Giraffe', this)">
+                        <img src="images/zebra.webp" alt="Zebra" class="option" onclick="selectOption('animals', 3, false, 'Zebra', this)">
+                        <img src="images/monkey.webp" alt="Monkey" class="option" onclick="selectOption('animals', 3, false, 'Monkey', this)">
+                        <img src="images/bird.webp" alt="Bird" class="option" onclick="selectOption('animals', 3, false, 'Bird', this)">
+                        <img src="images/cat.webp" alt="Cat" class="option" onclick="selectOption('animals', 3, false, 'Cat', this)">
+                        <img src="images/dog.webp" alt="Dog" class="option" onclick="selectOption('animals', 3, false, 'Dog', this)">
+                        <img src="images/fish.webp" alt="Fish" class="option" onclick="selectOption('animals', 3, false, 'Fish', this)">
+                    </div>
+                    <p class="feedback" id="animals-feedback-3"></p>
+                </div>
+
+                <!-- Slide 4 -->
+                <div class="slide" id="animals-slide-4">
+                    <img src="images/question.png" alt="Question" class="question-image">
+                    <h2>Choose the Zebra</h2>
+                    <div class="images-container">
+                        <img src="images/lion.webp" alt="Lion" class="option" onclick="selectOption('animals', 4, false, 'Lion', this)">
+                        <img src="images/elephant.webp" alt="Elephant" class="option" onclick="selectOption('animals', 4, false, 'Elephant', this)">
+                        <img src="images/giraffe.webp" alt="Giraffe" class="option" onclick="selectOption('animals', 4, false, 'Giraffe', this)">
+                        <img src="images/zebra.webp" alt="Zebra" class="option correct" onclick="selectOption('animals', 4, true, 'Zebra', this)">
+                        <img src="images/monkey.webp" alt="Monkey" class="option" onclick="selectOption('animals', 4, false, 'Monkey', this)">
+                        <img src="images/bird.webp" alt="Bird" class="option" onclick="selectOption('animals', 4, false, 'Bird', this)">
+                        <img src="images/cat.webp" alt="Cat" class="option" onclick="selectOption('animals', 4, false, 'Cat', this)">
+                        <img src="images/dog.webp" alt="Dog" class="option" onclick="selectOption('animals', 4, false, 'Dog', this)">
+                        <img src="images/fish.webp" alt="Fish" class="option correct" onclick="selectOption('animals', 4, false, 'Fish', this)">
+                    </div>
+                    <p class="feedback" id="animals-feedback-4"></p>
+                </div>
+
+                <!-- Slide 5 -->
+
+                <!-- Slide 6 -->
+                <div class="slide" id="animals-slide-5">
+                    <img src="images/question.png" alt="Question" class="question-image">
+                    <h2>Choose the Monkey</h2>
+                    <div class="images-container">
+                        <img src="images/lion.webp" alt="Lion" class="option" onclick="selectOption('animals', 5, false, 'Lion', this)">
+                        <img src="images/elephant.webp" alt="Elephant" class="option" onclick="selectOption('animals', 5, false, 'Elephant', this)">
+                        <img src="images/giraffe.webp" alt="Giraffe" class="option" onclick="selectOption('animals', 5, false, 'Giraffe', this)">
+                        <img src="images/zebra.webp" alt="Zebra" class="option" onclick="selectOption('animals', 5, false, 'Zebra', this)">
+                        <img src="images/monkey.webp" alt="Monkey" class="option correct" onclick="selectOption('animals', 5, true, 'Monkey', this)">
+                        <img src="images/bird.webp" alt="Bird" class="option" onclick="selectOption('animals', 5, false, 'Bird', this)">
+                        <img src="images/cat.webp" alt="Cat" class="option" onclick="selectOption('animals', 5, false, 'Cat', this)">
+                        <img src="images/dog.webp" alt="Dog" class="option" onclick="selectOption('animals', 5, false, 'Dog', this)">
+                        <img src="images/fish.webp" alt="Fish" class="option correct" onclick="selectOption('animals', 5, false, 'Fish', this)">
+                    </div>
+                    <p class="feedback" id="animals-feedback-5"></p>
+                </div>
+
+                                <div class="slide" id="animals-slide-6">
+                    <img src="images/question.png" alt="Question" class="question-image">
+                    <h2>Choose the Bird</h2>
+                    <div class="images-container">
+                        <img src="images/lion.webp" alt="Lion" class="option" onclick="selectOption('animals', 6, false, 'Lion', this)">
+                        <img src="images/elephant.webp" alt="Elephant" class="option" onclick="selectOption('animals', 6, false, 'Elephant', this)">
+                        <img src="images/giraffe.webp" alt="Giraffe" class="option" onclick="selectOption('animals', 6, false, 'Giraffe', this)">
+                        <img src="images/zebra.webp" alt="Zebra" class="option" onclick="selectOption('animals', 6, false, 'Zebra', this)">
+                        <img src="images/monkey.webp" alt="Monkey" class="option correct" onclick="selectOption('animals', 6, false, 'Monkey', this)">
+                        <img src="images/bird.webp" alt="Bird" class="option" onclick="selectOption('animals', 6, true, 'Bird', this)">
+                        <img src="images/cat.webp" alt="Cat" class="option" onclick="selectOption('animals', 6, false, 'Cat', this)">
+                        <img src="images/dog.webp" alt="Dog" class="option" onclick="selectOption('animals', 6, false, 'Dog', this)">
+                        <img src="images/fish.webp" alt="Fish" class="option correct" onclick="selectOption('animals', 6, false, 'Fish', this)">
+                    </div>
+                    <p class="feedback" id="animals-feedback-6"></p>
+                </div>
+
+
+                                <div class="slide" id="animals-slide-7">
+                    <img src="images/question.png" alt="Question" class="question-image">
+                    <h2>Choose the Cat</h2>
+                    <div class="images-container">
+                        <img src="images/lion.webp" alt="Lion" class="option" onclick="selectOption('animals', 7, false, 'Lion', this)">
+                        <img src="images/elephant.webp" alt="Elephant" class="option" onclick="selectOption('animals', 7, false, 'Elephant', this)">
+                        <img src="images/giraffe.webp" alt="Giraffe" class="option" onclick="selectOption('animals', 7, false, 'Giraffe', this)">
+                        <img src="images/zebra.webp" alt="Zebra" class="option" onclick="selectOption('animals', 7, false, 'Zebra', this)">
+                        <img src="images/monkey.webp" alt="Monkey" class="option correct" onclick="selectOption('animals', 7, false, 'Monkey', this)">
+                        <img src="images/bird.webp" alt="Bird" class="option" onclick="selectOption('animals', 7, false, 'Bird', this)">
+                        <img src="images/cat.webp" alt="Cat" class="option" onclick="selectOption('animals', 7, true, 'Cat', this)">
+                        <img src="images/dog.webp" alt="Dog" class="option" onclick="selectOption('animals', 7, false, 'Dog', this)">
+                        <img src="images/fish.webp" alt="Fish" class="option correct" onclick="selectOption('animals', 7, false, 'Fish', this)">
+                    </div>
+                    <p class="feedback" id="animals-feedback-7"></p>
+                </div>
+
+
+
+                                <div class="slide" id="animals-slide-8">
+                    <img src="images/question.png" alt="Question" class="question-image">
+                    <h2>Choose the Dog</h2>
+                    <div class="images-container">
+                        <img src="images/lion.webp" alt="Lion" class="option" onclick="selectOption('animals', 8, false, 'Lion', this)">
+                        <img src="images/elephant.webp" alt="Elephant" class="option" onclick="selectOption('animals', 8, false, 'Elephant', this)">
+                        <img src="images/giraffe.webp" alt="Giraffe" class="option" onclick="selectOption('animals', 8, false, 'Giraffe', this)">
+                        <img src="images/zebra.webp" alt="Zebra" class="option" onclick="selectOption('animals', 8, false, 'Zebra', this)">
+                        <img src="images/monkey.webp" alt="Monkey" class="option correct" onclick="selectOption('animals', 6, false, 'Monkey', this)">
+                        <img src="images/bird.webp" alt="Bird" class="option" onclick="selectOption('animals', 8, false, 'Bird', this)">
+                        <img src="images/cat.webp" alt="Cat" class="option" onclick="selectOption('animals', 8, false, 'Cat', this)">
+                        <img src="images/dog.webp" alt="Dog" class="option" onclick="selectOption('animals', 8, true, 'Dog', this)">
+                        <img src="images/fish.webp" alt="Fish" class="option correct" onclick="selectOption('animals', 8, false, 'Fish', this)">
+                    </div>
+                    <p class="feedback" id="animals-feedback-8"></p>
+                </div>
+
+
+
+
+                                <div class="slide" id="animals-slide-9"/>
+                    <img src="images/question.png" alt="Question" class="question-image">
+                    <h2>Choose the Fish</h2>
+                    <div class="images-container">
+                        <img src="images/lion.webp" alt="Lion" class="option" onclick="selectOption('animals', 9, false, 'Lion', this)">
+                        <img src="images/elephant.webp" alt="Elephant" class="option" onclick="selectOption('animals', 9, false, 'Elephant', this)">
+                        <img src="images/giraffe.webp" alt="Giraffe" class="option" onclick="selectOption('animals', 9, false, 'Giraffe', this)">
+                        <img src="images/zebra.webp" alt="Zebra" class="option" onclick="selectOption('animals', 9, false, 'Zebra', this)">
+                        <img src="images/monkey.webp" alt="Monkey" class="option" onclick="selectOption('animals', 9, false, 'Monkey', this)">
+                        <img src="images/bird.webp" alt="Bird" class="option" onclick="selectOption('animals', 9, false, 'Bird', this)">
+                        <img src="images/cat.webp" alt="Cat" class="option" onclick="selectOption('animals', 9, false, 'Cat', this)">
+                        <img src="images/dog.webp" alt="Dog" class="option" onclick="selectOption('animals', 9, false, 'Dog', this)">
+                        <img src="images/fish.webp" alt="Fish" class="option correct" onclick="selectOption('animals', 9, true, 'Fish', this)">
+                    </div>
+                    <p class="feedback" id="animals-feedback-9"></p>
+                </div>
+
+
+
+                <!-- Final Slide for Animals -->
+<div class="slide final-slide" id="animals-final-slide">
+    <h2>Job Well Done!</h2>
+    <img src="images/success.png" alt="Congratulations" class="congrats-image">
+    <button class="color-button" onclick="selectLesson('animals')">Restart Lesson</button>
+</div>
+
+            </div>
+
+            <!-- Colors Slides -->
+            <div class="lesson" id="colors" style="display: none;">
+                <!-- Slide 1: Introduction to Colors -->
+                <div class="slide" id="colors-slide-1">
+                    <img src="images/question.png" alt="Question" class="question-image">
+                    <h2>Learn Colors!</h2>
+                    <div class="color-palette">
+                        <div class="color-block" style="background-color: red;" onclick="speak('Red')">Red</div>
+                        <div class="color-block" style="background-color: blue;" onclick="speak('Blue')">Blue</div>
+                        <div class="color-block" style="background-color: green;" onclick="speak('Green')">Green</div>
+                        <div class="color-block" style="background-color: yellow;" onclick="speak('Yellow')">Yellow</div>
+                        <div class="color-block" style="background-color: purple;" onclick="speak('Purple')">Purple</div>
+                        <div class="color-block" style="background-color: orange;" onclick="speak('Orange')">Orange</div>
+                        <div class="color-block" style="background-color: pink;" onclick="speak('Pink')">Pink</div>
+                        <div class="color-block" style="background-color: brown;" onclick="speak('Brown')">Brown</div>
+                        <div class="color-block" style="background-color: black;" onclick="speak('Black')">Black</div>
+                        <div class="color-block" style="background-color: white; color: #000;" onclick="speak('White')">White</div>
+                        <!-- Add more colors if needed -->
+                    </div>
+                    <button class="color-button" onclick="showNextSlideManual('colors', 1)">Next</button>
+                </div>
+
+                <!-- Slide 2 -->
+                <div class="slide" id="colors-slide-2">
+                    <img src="images/question.png" alt="Question" class="question-image">
+                    <h2>Which color is Yellow?</h2>
+           
+                    <div class="color-options">
+                        <div class="color-block correct" style="background-color: yellow;" onclick="selectOption('colors', 2, true, 'Yellow', this)">Yellow</div>
+                        <div class="color-block" style="background-color: blue;" onclick="selectOption('colors', 2, false, 'Blue', this)">Blue</div>
+                        <div class="color-block" style="background-color: red;" onclick="selectOption('colors', 2, false, 'Red', this)">Red</div>
+                        <div class="color-block" style="background-color: green;" onclick="selectOption('colors', 2, false, 'Green', this)">Green</div>
+                        <div class="color-block" style="background-color: purple;" onclick="selectOption('colors', 2, false, 'Purple', this)">Purple</div>
+                    </div>
+                    <p class="feedback" id="colors-feedback-2"></p>
+                </div>
+
+                <!-- Slide 3 -->
+                <div class="slide" id="colors-slide-3">
+                    <img src="images/question.png" alt="Question" class="question-image">
+                    <h2>Which color is Green?</h2>
+        
+                    <div class="color-options">
+                        <div class="color-block correct" style="background-color: green;" onclick="selectOption('colors', 3, true, 'Green', this)">Green</div>
+                        <div class="color-block" style="background-color: brown;" onclick="selectOption('colors', 3, false, 'Brown', this)">Brown</div>
+                        <div class="color-block" style="background-color: blue;" onclick="selectOption('colors', 3, false, 'Blue', this)">Blue</div>
+                        <div class="color-block" style="background-color: red;" onclick="selectOption('colors', 3, false, 'Red', this)">Red</div>
+                        <div class="color-block" style="background-color: yellow;" onclick="selectOption('colors', 3, false, 'Yellow', this)">Yellow</div>
+                    </div>
+                    <p class="feedback" id="colors-feedback-3"></p>
+                </div>
+
+                <!-- Slide 4 -->
+                <div class="slide" id="colors-slide-4">
+                    <img src="images/question.png" alt="Question" class="question-image">
+                    <h2>Which color is Blue?</h2>
+        
+                    <div class="color-options">
+                        <div class="color-block correct" style="background-color: blue;" onclick="selectOption('colors', 4, true, 'Blue', this)">Blue</div>
+                        <div class="color-block" style="background-color: red;" onclick="selectOption('colors', 4, false, 'Red', this)">Red</div>
+                        <div class="color-block" style="background-color: green;" onclick="selectOption('colors', 4, false, 'Green', this)">Green</div>
+                        <div class="color-block" style="background-color: yellow;" onclick="selectOption('colors', 4, false, 'Yellow', this)">Yellow</div>
+                        <div class="color-block" style="background-color: purple;" onclick="selectOption('colors', 4, false, 'Purple', this)">Purple</div>
+                    </div>
+                    <p class="feedback" id="colors-feedback-4"></p>
+                </div>
+
+                <!-- Slide 5 -->
+                <div class="slide" id="colors-slide-5">
+                    <img src="images/question.png" alt="Question" class="question-image">
+                    <h2>Which color is Red?</h2>
+        
+                    <div class="color-options">
+                        <div class="color-block correct" style="background-color: red;" onclick="selectOption('colors', 5, true, 'Red', this)">Red</div>
+                        <div class="color-block" style="background-color: green;" onclick="selectOption('colors', 5, false, 'Green', this)">Green</div>
+                        <div class="color-block" style="background-color: yellow;" onclick="selectOption('colors', 5, false, 'Yellow', this)">Yellow</div>
+                        <div class="color-block" style="background-color: blue;" onclick="selectOption('colors', 5, false, 'Blue', this)">Blue</div>
+                        <div class="color-block" style="background-color: purple;" onclick="selectOption('colors', 5, false, 'Purple', this)">Purple</div>
+                    </div>
+                    <p class="feedback" id="colors-feedback-5"></p>
+                </div>
+
+                <!-- Final Slide -->
+                <div class="slide final-slide" id="colors-final-slide">
+                    <h2>Job Well Done!</h2>
+                    <img src="images/success.png" alt="Congratulations" class="congrats-image">
+                    <button class="color-button" onclick="selectLesson('colors')">Restart Lesson</button>
+                </div>
+            </div>
+
+            <!-- Numbers Slides -->
+            <div class="lesson" id="numbers" style="display: none;">
+                <!-- Slide 1 -->
+                <div class="slide" id="numbers-slide-1">
+                    <img src="images/question.png" alt="Question" class="question-image">
+                    <h2>One -</h2>
+                    <div class="number-options">
+                        <button onclick="selectOption('numbers', 1, false, '2', this)">2</button>
+                        <button class="correct" onclick="selectOption('numbers', 1, true, '1', this)">1</button>
+                        <button onclick="selectOption('numbers', 1, false, '3', this)">3</button>
+                        <button onclick="selectOption('numbers', 1, false, '4', this)">4</button>
+                        <button onclick="selectOption('numbers', 1, false, '5', this)">5</button>
+                        <button onclick="selectOption('numbers', 1, false, '6', this)">6</button>
+                        <button onclick="selectOption('numbers', 1, false, '7', this)">7</button>
+                        <button onclick="selectOption('numbers', 1, false, '8', this)">8</button>
+                        <button onclick="selectOption('numbers', 1, false, '9', this)">9</button>
+                    </div>
+                    <p class="feedback" id="numbers-feedback-1"></p>
+                </div>
+
+                <!-- Slide 2 -->
+                <div class="slide" id="numbers-slide-2">
+                    <img src="images/question.png" alt="Question" class="question-image">
+                    <h2>Two -</h2>
+                    <div class="number-options">
+                        <button class="correct" onclick="selectOption('numbers', 2, true, '2', this)">2</button>
+                        <button onclick="selectOption('numbers', 2, false, '3', this)">3</button>
+                        <button onclick="selectOption('numbers', 2, false, '1', this)">1</button>
+                        <button onclick="selectOption('numbers', 2, false, '4', this)">4</button>
+                        <button onclick="selectOption('numbers', 2, false, '5', this)">5</button>
+                        <button onclick="selectOption('numbers', 2, false, '6', this)">6</button>
+                        <button onclick="selectOption('numbers', 2, false, '7', this)">7</button>
+                        <button onclick="selectOption('numbers', 2, false, '8', this)">8</button>
+                        <button onclick="selectOption('numbers', 2, false, '9', this)">9</button>
+                    </div>
+                    <p class="feedback" id="numbers-feedback-2"></p>
+                </div>
+
+                <!-- Slide 3 -->
+                <div class="slide" id="numbers-slide-3">
+                    <img src="images/question.png" alt="Question" class="question-image">
+                    <h2>Three -</h2>
+                    <div class="number-options">
+                        <button onclick="selectOption('numbers', 3, false, '2', this)">2</button>
+                        <button onclick="selectOption('numbers', 3, false, '1', this)">1</button>
+                        <button class="correct" onclick="selectOption('numbers', 3, true, '3', this)">3</button>
+                        <button onclick="selectOption('numbers', 3, false, '4', this)">4</button>
+                        <button onclick="selectOption('numbers', 3, false, '5', this)">5</button>
+                        <button onclick="selectOption('numbers', 3, false, '6', this)">6</button>
+                        <button onclick="selectOption('numbers', 3, false, '7', this)">7</button>
+                        <button onclick="selectOption('numbers', 3, false, '8', this)">8</button>
+                        <button onclick="selectOption('numbers', 3, false, '9', this)">9</button>
+                    </div>
+                    <p class="feedback" id="numbers-feedback-3"></p>
+                </div>
+
+                <!-- Slide 4 -->
+                <div class="slide" id="numbers-slide-4">
+                    <img src="images/question.png" alt="Question" class="question-image">
+                    <h2>Four -</h2>
+                    <div class="number-options">
+                        <button onclick="selectOption('numbers', 4, false, '4', this)">5</button>
+                        <button onclick="selectOption('numbers', 4, false, '3', this)">3</button>
+                        <button onclick="selectOption('numbers', 4, false, '2', this)">2</button>
+                        <button class="correct" onclick="selectOption('numbers', 4, true, '4', this)">4</button>
+                        <button onclick="selectOption('numbers', 4, false, '1', this)">1</button>
+                        <button onclick="selectOption('numbers', 4, false, '6', this)">6</button>
+                        <button onclick="selectOption('numbers', 4, false, '7', this)">7</button>
+                        <button onclick="selectOption('numbers', 4, false, '8', this)">8</button>
+                        <button onclick="selectOption('numbers', 4, false, '9', this)">9</button>
+                    </div>
+                    <p class="feedback" id="numbers-feedback-4"></p>
+                </div>
+
+                <!-- Slide 5 -->
+                <div class="slide" id="numbers-slide-5">
+                    <img src="images/question.png" alt="Question" class="question-image">
+                    <h2>Five -</h2>
+                    <div class="number-options">
+                        <button onclick="selectOption('numbers', 5, false, '2', this)">2</button>
+                        <button onclick="selectOption('numbers', 5, false, '3', this)">3</button>
+                        <button onclick="selectOption('numbers', 5, false, '4', this)">4</button>
+                        <button onclick="selectOption('numbers', 5, false, '1', this)">1</button>
+                        <button class="correct" onclick="selectOption('numbers', 5, true, '5', this)">5</button>
+                        <button onclick="selectOption('numbers', 5, false, '6', this)">6</button>
+                        <button onclick="selectOption('numbers', 5, false, '7', this)">7</button>
+                        <button onclick="selectOption('numbers', 5, false, '8', this)">8</button>
+                        <button onclick="selectOption('numbers', 5, false, '9', this)">9</button>
+                    </div>
+                    <p class="feedback" id="numbers-feedback-5"></p>
+                </div>
+
+                <!-- Slide 6 -->
+                <div class="slide" id="numbers-slide-6">
+                    <img src="images/question.png" alt="Question" class="question-image">
+                    <h2>Six -</h2>
+                    <div class="number-options">
+                        <button onclick="selectOption('numbers', 6, false, '2', this)">2</button>
+                        <button onclick="selectOption('numbers', 6, false, '3', this)">3</button>
+                        <button onclick="selectOption('numbers', 6, false, '4', this)">4</button>
+                        <button onclick="selectOption('numbers', 6, false, '5', this)">5</button>
+                        <button onclick="selectOption('numbers', 6, false, '1', this)">1</button>
+                        <button class="correct" onclick="selectOption('numbers', 6, true, '6', this)">6</button>
+                        <button onclick="selectOption('numbers', 6, false, '7', this)">7</button>
+                        <button onclick="selectOption('numbers', 6, false, '8', this)">8</button>
+                        <button onclick="selectOption('numbers', 6, false, '9', this)">9</button>
+                    </div>
+                    <p class="feedback" id="numbers-feedback-6"></p>
+                </div>
+
+                <!-- Slide 7 -->
+                <div class="slide" id="numbers-slide-7">
+                    <img src="images/question.png" alt="Question" class="question-image">
+                    <h2>Seven -</h2>
+                    <div class="number-options">
+                        <button onclick="selectOption('numbers', 7, false, '2', this)">2</button>
+                        <button onclick="selectOption('numbers', 7, false, '3', this)">3</button>
+                        <button onclick="selectOption('numbers', 7, false, '4', this)">4</button>
+                        <button onclick="selectOption('numbers', 7, false, '5', this)">5</button>
+                        <button onclick="selectOption('numbers', 7, false, '1', this)">1</button>
+                        <button onclick="selectOption('numbers', 7, false, '6', this)">6</button>
+                        <button class="correct" onclick="selectOption('numbers', 7, true, '7', this)">7</button>
+                        <button onclick="selectOption('numbers', 7, false, '8', this)">8</button>
+                        <button onclick="selectOption('numbers', 7, false, '9', this)">9</button>
+                    </div>
+                    <p class="feedback" id="numbers-feedback-7"></p>
+                </div>
+
+                <!-- Slide 8 -->
+                <div class="slide" id="numbers-slide-8">
+                    <img src="images/question.png" alt="Question" class="question-image">
+                    <h2>Eight -</h2>
+                    <div class="number-options">
+                        <button onclick="selectOption('numbers', 8, false, '2', this)">2</button>
+                        <button onclick="selectOption('numbers', 8, false, '3', this)">3</button>
+                        <button onclick="selectOption('numbers', 8, false, '4', this)">4</button>
+                        <button onclick="selectOption('numbers', 8, false, '5', this)">5</button>
+                        <button onclick="selectOption('numbers', 8, false, '1', this)">1</button>
+                        <button onclick="selectOption('numbers', 8, false, '6', this)">6</button>
+                        <button onclick="selectOption('numbers', 8, false, '7', this)">7</button>
+                        <button class="correct" onclick="selectOption('numbers', 8, true, '8', this)">8</button>
+                        <button onclick="selectOption('numbers', 8, false, '9', this)">9</button>
+                    </div>
+                    <p class="feedback" id="numbers-feedback-8"></p>
+                </div>
+
+                <!-- Slide 9 -->
+                <div class="slide" id="numbers-slide-9">
+                    <img src="images/question.png" alt="Question" class="question-image">
+                    <h2>Nine -</h2>
+                    <div class="number-options">
+                        <button onclick="selectOption('numbers', 9, false, '2', this)">2</button>
+                        <button onclick="selectOption('numbers', 9, false, '3', this)">3</button>
+                        <button onclick="selectOption('numbers', 9, false, '4', this)">4</button>
+                        <button onclick="selectOption('numbers', 9, false, '5', this)">5</button>
+                        <button onclick="selectOption('numbers', 9, false, '1', this)">1</button>
+                        <button onclick="selectOption('numbers', 9, false, '6', this)">6</button>
+                        <button onclick="selectOption('numbers', 9, false, '7', this)">7</button>
+                        <button onclick="selectOption('numbers', 9, false, '8', this)">8</button>
+                        <button class="correct" onclick="selectOption('numbers', 9, true, '9', this)">9</button>
+                    </div>
+                    <p class="feedback" id="numbers-feedback-9"></p>
+                </div>
+
+                <!-- Final Slide -->
+                <div class="slide final-slide" id="numbers-final-slide">
+                    <h2>Job Well Done!</h2>
+                    <img src="images/success.png" alt="Congratulations" class="congrats-image">
+                    <button class="color-button" onclick="selectLesson('numbers')">Restart Lesson</button>
+                </div>
+            </div>
+
+            <!-- Shapes Slides -->
+            <div class="lesson" id="shapes" style="display: none;">
+                <!-- Slide 1: Identify the Triangle -->
+                <div class="slide" id="shapes-slide-1">
+                    <img src="images/question.png" alt="Question" class="question-image">
+                    <h2>Identify the Triangle</h2>
+                    <div class="images-container">
+                        <!-- Triangle (Correct) -->
+                        <svg class="svg-shape correct" onclick="selectOption('shapes', 1, true, 'Triangle', this)" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+                            <polygon points="50,15 90,85 10,85" style="fill:#e74c3c; stroke:#333; stroke-width:2"/>
+                        </svg>
+                        <!-- Circle -->
+                        <svg class="svg-shape" onclick="selectOption('shapes', 1, false, 'Circle', this)" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+                            <circle cx="50" cy="50" r="35" style="fill:#3498db; stroke:#333; stroke-width:2"/>
+                        </svg>
+                        <!-- Square -->
+                        <svg class="svg-shape" onclick="selectOption('shapes', 1, false, 'Square', this)" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+                            <rect x="20" y="20" width="60" height="60" style="fill:#2ecc71; stroke:#333; stroke-width:2"/>
+                        </svg>
+                        <!-- Rectangle -->
+                        <svg class="svg-shape" onclick="selectOption('shapes', 1, false, 'Rectangle', this)" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 80">
+                            <rect x="10" y="10" width="100" height="60" style="fill:#f1c40f; stroke:#333; stroke-width:2"/>
+                        </svg>
+                        <!-- Oval -->
+                        <svg class="svg-shape" onclick="selectOption('shapes', 1, false, 'Oval', this)" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 60">
+                            <ellipse cx="50" cy="30" rx="40" ry="20" style="fill:#9b59b6; stroke:#333; stroke-width:2"/>
+                        </svg>
+                        <!-- Additional Shapes (optional) -->
+                    </div>
+                    <p class="feedback" id="shapes-feedback-1"></p>
+                </div>
+
+                <!-- Slide 2: Identify the Circle -->
+                <div class="slide" id="shapes-slide-2">
+                    <img src="images/question.png" alt="Question" class="question-image">
+                    <h2>Identify the Circle</h2>
+                    <div class="images-container">
+                        <!-- Triangle -->
+                        <svg class="svg-shape" onclick="selectOption('shapes', 2, false, 'Triangle', this)" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+                            <polygon points="50,15 90,85 10,85" style="fill:#e74c3c; stroke:#333; stroke-width:2"/>
+                        </svg>
+                        <!-- Circle (Correct) -->
+                        <svg class="svg-shape correct" onclick="selectOption('shapes', 2, true, 'Circle', this)" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+                            <circle cx="50" cy="50" r="35" style="fill:#3498db; stroke:#333; stroke-width:2"/>
+                        </svg>
+                        <!-- Square -->
+                        <svg class="svg-shape" onclick="selectOption('shapes', 2, false, 'Square', this)" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+                            <rect x="20" y="20" width="60" height="60" style="fill:#2ecc71; stroke:#333; stroke-width:2"/>
+                        </svg>
+                        <!-- Rectangle -->
+                        <svg class="svg-shape" onclick="selectOption('shapes', 2, false, 'Rectangle', this)" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 80">
+                            <rect x="10" y="10" width="100" height="60" style="fill:#f1c40f; stroke:#333; stroke-width:2"/>
+                        </svg>
+                        <!-- Oval -->
+                        <svg class="svg-shape" onclick="selectOption('shapes', 2, false, 'Oval', this)" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 60">
+                            <ellipse cx="50" cy="30" rx="40" ry="20" style="fill:#9b59b6; stroke:#333; stroke-width:2"/>
+                        </svg>
+                    </div>
+                    <p class="feedback" id="shapes-feedback-2"></p>
+                </div>
+
+                <!-- Slide 3: Identify the Square -->
+                <div class="slide" id="shapes-slide-3">
+                    <img src="images/question.png" alt="Question" class="question-image">
+                    <h2>Identify the Square</h2>
+                    <div class="images-container">
+                        <!-- Triangle -->
+                        <svg class="svg-shape" onclick="selectOption('shapes', 3, false, 'Triangle', this)" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+                            <polygon points="50,15 90,85 10,85" style="fill:#e74c3c; stroke:#333; stroke-width:2"/>
+                        </svg>
+                        <!-- Circle -->
+                        <svg class="svg-shape" onclick="selectOption('shapes', 3, false, 'Circle', this)" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+                            <circle cx="50" cy="50" r="35" style="fill:#3498db; stroke:#333; stroke-width:2"/>
+                        </svg>
+                        <!-- Square (Correct) -->
+                        <svg class="svg-shape correct" onclick="selectOption('shapes', 3, true, 'Square', this)" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+                            <rect x="20" y="20" width="60" height="60" style="fill:#2ecc71; stroke:#333; stroke-width:2"/>
+                        </svg>
+                        <!-- Rectangle -->
+                        <svg class="svg-shape" onclick="selectOption('shapes', 3, false, 'Rectangle', this)" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 80">
+                            <rect x="10" y="10" width="100" height="60" style="fill:#f1c40f; stroke:#333; stroke-width:2"/>
+                        </svg>
+                        <!-- Oval -->
+                        <svg class="svg-shape" onclick="selectOption('shapes', 3, false, 'Oval', this)" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 60">
+                            <ellipse cx="50" cy="30" rx="40" ry="20" style="fill:#9b59b6; stroke:#333; stroke-width:2"/>
+                        </svg>
+                    </div>
+                    <p class="feedback" id="shapes-feedback-3"></p>
+                </div>
+
+                <!-- Slide 4: Identify the Rectangle -->
+                <div class="slide" id="shapes-slide-4">
+                    <img src="images/question.png" alt="Question" class="question-image">
+                    <h2>Identify the Rectangle</h2>
+                    <div class="images-container">
+                        <!-- Triangle -->
+                        <svg class="svg-shape" onclick="selectOption('shapes', 4, false, 'Triangle', this)" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+                            <polygon points="50,15 90,85 10,85" style="fill:#e74c3c; stroke:#333; stroke-width:2"/>
+                        </svg>
+                        <!-- Circle -->
+                        <svg class="svg-shape" onclick="selectOption('shapes', 4, false, 'Circle', this)" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+                            <circle cx="50" cy="50" r="35" style="fill:#3498db; stroke:#333; stroke-width:2"/>
+                        </svg>
+                        <!-- Square -->
+                        <svg class="svg-shape" onclick="selectOption('shapes', 4, false, 'Square', this)" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+                            <rect x="20" y="20" width="60" height="60" style="fill:#2ecc71; stroke:#333; stroke-width:2"/>
+                        </svg>
+                        <!-- Rectangle (Correct) -->
+                        <svg class="svg-shape correct" onclick="selectOption('shapes', 4, true, 'Rectangle', this)" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 80">
+                            <rect x="10" y="10" width="100" height="60" style="fill:#f1c40f; stroke:#333; stroke-width:2"/>
+                        </svg>
+                        <!-- Oval -->
+                        <svg class="svg-shape" onclick="selectOption('shapes', 4, false, 'Oval', this)" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 60">
+                            <ellipse cx="50" cy="30" rx="40" ry="20" style="fill:#9b59b6; stroke:#333; stroke-width:2"/>
+                        </svg>
+                    </div>
+                    <p class="feedback" id="shapes-feedback-4"></p>
+                </div>
+
+                <!-- Slide 5: Identify the Oval -->
+                <div class="slide" id="shapes-slide-5">
+                    <img src="images/question.png" alt="Question" class="question-image">
+                    <h2>Identify the Oval</h2>
+                    <div class="images-container">
+                        <!-- Triangle -->
+                        <svg class="svg-shape" onclick="selectOption('shapes', 5, false, 'Triangle', this)" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+                            <polygon points="50,15 90,85 10,85" style="fill:#e74c3c; stroke:#333; stroke-width:2"/>
+                        </svg>
+                        <!-- Circle -->
+                        <svg class="svg-shape" onclick="selectOption('shapes', 5, false, 'Circle', this)" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+                            <circle cx="50" cy="50" r="35" style="fill:#3498db; stroke:#333; stroke-width:2"/>
+                        </svg>
+                        <!-- Square -->
+                        <svg class="svg-shape" onclick="selectOption('shapes', 5, false, 'Square', this)" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+                            <rect x="20" y="20" width="60" height="60" style="fill:#2ecc71; stroke:#333; stroke-width:2"/>
+                        </svg>
+                        <!-- Rectangle -->
+                        <svg class="svg-shape" onclick="selectOption('shapes', 5, false, 'Rectangle', this)" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 80">
+                            <rect x="10" y="10" width="100" height="60" style="fill:#f1c40f; stroke:#333; stroke-width:2"/>
+                        </svg>
+                        <!-- Oval (Correct) -->
+                        <svg class="svg-shape correct" onclick="selectOption('shapes', 5, true, 'Oval', this)" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 60">
+                            <ellipse cx="50" cy="30" rx="40" ry="20" style="fill:#9b59b6; stroke:#333; stroke-width:2"/>
+                        </svg>
+                    </div>
+                    <p class="feedback" id="shapes-feedback-5"></p>
+                </div>
+
+                <!-- Final Slide -->
+                <div class="slide final-slide" id="shapes-final-slide">
+                    <h2>Job Well Done!</h2>
+                    <img src="images/success.png" alt="Congratulations" class="congrats-image">
+                    <button class="color-button" onclick="selectLesson('shapes')">Restart Lesson</button>
+                </div>
+            </div>
+
+            <!-- Alphabet Slides -->
+  <!-- Alphabet Slides -->
+<div class="lesson" id="alphabet" style="display: none;">
+    <!-- Slide 1: Letter A -->
+    <div class="slide" id="alphabet-slide-1">
+        <img src="images/question.png" alt="Question" class="question-image">
+        <h2>Letter A</h2>
+        <div class="letter-options">
+            <div class="letter-option correct" style="background-color: #e74c3c;" onclick="selectOption('alphabet', 1, true, 'a', this)">a</div>
+            <div class="letter-option" style="background-color: #3498db;" onclick="selectOption('alphabet', 1, false, 'b', this)">b</div>
+            <div class="letter-option" style="background-color: #2ecc71;" onclick="selectOption('alphabet', 1, false, 'c', this)">c</div>
+            <div class="letter-option" style="background-color: #f1c40f;" onclick="selectOption('alphabet', 1, false, 'd', this)">d</div>
+            <div class="letter-option" style="background-color: #9b59b6;" onclick="selectOption('alphabet', 1, false, 'e', this)">e</div>
+            <div class="letter-option" style="background-color: #1abc9c;" onclick="selectOption('alphabet', 1, false, 'f', this)">f</div>
+            <div class="letter-option" style="background-color: #e67e22;" onclick="selectOption('alphabet', 1, false, 'g', this)">g</div>
+            <div class="letter-option" style="background-color: #34495e;" onclick="selectOption('alphabet', 1, false, 'h', this)">h</div>
+            <div class="letter-option" style="background-color: #95a5a6;" onclick="selectOption('alphabet', 1, false, 'i', this)">i</div>
+        </div>
+        <p class="feedback" id="alphabet-feedback-1"></p>
+    </div>
+
+    <!-- Slide 2: Letter B -->
+    <div class="slide" id="alphabet-slide-2">
+        <img src="images/question.png" alt="Question" class="question-image">
+        <h2>Letter B</h2>
+        <div class="letter-options">
+            <div class="letter-option" style="background-color: #e74c3c;" onclick="selectOption('alphabet', 2, false, 'a', this)">a</div>
+            <div class="letter-option correct" style="background-color: #3498db;" onclick="selectOption('alphabet', 2, true, 'b', this)">b</div>
+            <div class="letter-option" style="background-color: #2ecc71;" onclick="selectOption('alphabet', 2, false, 'c', this)">c</div>
+            <div class="letter-option" style="background-color: #f1c40f;" onclick="selectOption('alphabet', 2, false, 'd', this)">d</div>
+            <div class="letter-option" style="background-color: #9b59b6;" onclick="selectOption('alphabet', 2, false, 'e', this)">e</div>
+            <div class="letter-option" style="background-color: #1abc9c;" onclick="selectOption('alphabet', 2, false, 'f', this)">f</div>
+            <div class="letter-option" style="background-color: #e67e22;" onclick="selectOption('alphabet', 2, false, 'g', this)">g</div>
+            <div class="letter-option" style="background-color: #34495e;" onclick="selectOption('alphabet', 2, false, 'h', this)">h</div>
+            <div class="letter-option" style="background-color: #95a5a6;" onclick="selectOption('alphabet', 2, false, 'i', this)">i</div>
+        </div>
+        <p class="feedback" id="alphabet-feedback-2"></p>
+    </div>
+
+    <!-- Slide 3: Letter C -->
+    <div class="slide" id="alphabet-slide-3">
+        <img src="images/question.png" alt="Question" class="question-image">
+        <h2>Letter C</h2>
+        <div class="letter-options">
+            <div class="letter-option" style="background-color: #e74c3c;" onclick="selectOption('alphabet', 3, false, 'a', this)">a</div>
+            <div class="letter-option" style="background-color: #3498db;" onclick="selectOption('alphabet', 3, false, 'b', this)">b</div>
+            <div class="letter-option correct" style="background-color: #2ecc71;" onclick="selectOption('alphabet', 3, true, 'c', this)">c</div>
+            <div class="letter-option" style="background-color: #f1c40f;" onclick="selectOption('alphabet', 3, false, 'd', this)">d</div>
+            <div class="letter-option" style="background-color: #9b59b6;" onclick="selectOption('alphabet', 3, false, 'e', this)">e</div>
+            <div class="letter-option" style="background-color: #1abc9c;" onclick="selectOption('alphabet', 3, false, 'f', this)">f</div>
+            <div class="letter-option" style="background-color: #e67e22;" onclick="selectOption('alphabet', 3, false, 'g', this)">g</div>
+            <div class="letter-option" style="background-color: #34495e;" onclick="selectOption('alphabet', 3, false, 'h', this)">h</div>
+            <div class="letter-option" style="background-color: #95a5a6;" onclick="selectOption('alphabet', 3, false, 'i', this)">i</div>
+        </div>
+        <p class="feedback" id="alphabet-feedback-3"></p>
+    </div>
+
+    <!-- Slide 4: Letter D -->
+    <div class="slide" id="alphabet-slide-4">
+        <img src="images/question.png" alt="Question" class="question-image">
+        <h2>Letter D</h2>
+        <div class="letter-options">
+            <div class="letter-option" style="background-color: #e74c3c;" onclick="selectOption('alphabet', 4, false, 'a', this)">a</div>
+            <div class="letter-option" style="background-color: #3498db;" onclick="selectOption('alphabet', 4, false, 'b', this)">b</div>
+            <div class="letter-option" style="background-color: #2ecc71;" onclick="selectOption('alphabet', 4, false, 'c', this)">c</div>
+            <div class="letter-option correct" style="background-color: #f1c40f;" onclick="selectOption('alphabet', 4, true, 'd', this)">d</div>
+            <div class="letter-option" style="background-color: #9b59b6;" onclick="selectOption('alphabet', 4, false, 'e', this)">e</div>
+            <div class="letter-option" style="background-color: #1abc9c;" onclick="selectOption('alphabet', 4, false, 'f', this)">f</div>
+            <div class="letter-option" style="background-color: #e67e22;" onclick="selectOption('alphabet', 4, false, 'g', this)">g</div>
+            <div class="letter-option" style="background-color: #34495e;" onclick="selectOption('alphabet', 4, false, 'h', this)">h</div>
+            <div class="letter-option" style="background-color: #95a5a6;" onclick="selectOption('alphabet', 4, false, 'i', this)">i</div>
+        </div>
+        <p class="feedback" id="alphabet-feedback-4"></p>
+    </div>
+
+    <!-- Slide 5: Letter E -->
+    <div class="slide" id="alphabet-slide-5">
+        <img src="images/question.png" alt="Question" class="question-image">
+        <h2>Letter E</h2>
+        <div class="letter-options">
+            <div class="letter-option" style="background-color: #e74c3c;" onclick="selectOption('alphabet', 5, false, 'a', this)">a</div>
+            <div class="letter-option" style="background-color: #3498db;" onclick="selectOption('alphabet', 5, false, 'b', this)">b</div>
+            <div class="letter-option" style="background-color: #2ecc71;" onclick="selectOption('alphabet', 5, false, 'c', this)">c</div>
+            <div class="letter-option" style="background-color: #f1c40f;" onclick="selectOption('alphabet', 5, false, 'd', this)">d</div>
+            <div class="letter-option correct" style="background-color: #9b59b6;" onclick="selectOption('alphabet', 5, true, 'e', this)">e</div>
+            <div class="letter-option" style="background-color: #1abc9c;" onclick="selectOption('alphabet', 5, false, 'f', this)">f</div>
+            <div class="letter-option" style="background-color: #e67e22;" onclick="selectOption('alphabet', 5, false, 'g', this)">g</div>
+            <div class="letter-option" style="background-color: #34495e;" onclick="selectOption('alphabet', 5, false, 'h', this)">h</div>
+            <div class="letter-option" style="background-color: #95a5a6;" onclick="selectOption('alphabet', 5, false, 'i', this)">i</div>
+        </div>
+        <p class="feedback" id="alphabet-feedback-5"></p>
+    </div>
+
+    <!-- Slide 6: Letter F -->
+    <div class="slide" id="alphabet-slide-6">
+        <img src="images/question.png" alt="Question" class="question-image">
+        <h2>Letter F</h2>
+        <div class="letter-options">
+            <div class="letter-option" style="background-color: #e74c3c;" onclick="selectOption('alphabet', 6, false, 'a', this)">a</div>
+            <div class="letter-option" style="background-color: #3498db;" onclick="selectOption('alphabet', 6, false, 'b', this)">b</div>
+            <div class="letter-option" style="background-color: #2ecc71;" onclick="selectOption('alphabet', 6, false, 'c', this)">c</div>
+            <div class="letter-option" style="background-color: #f1c40f;" onclick="selectOption('alphabet', 6, false, 'd', this)">d</div>
+            <div class="letter-option" style="background-color: #9b59b6;" onclick="selectOption('alphabet', 6, false, 'e', this)">e</div>
+            <div class="letter-option correct" style="background-color: #1abc9c;" onclick="selectOption('alphabet', 6, true, 'f', this)">f</div>
+            <div class="letter-option" style="background-color: #e67e22;" onclick="selectOption('alphabet', 6, false, 'g', this)">g</div>
+            <div class="letter-option" style="background-color: #34495e;" onclick="selectOption('alphabet', 6, false, 'h', this)">h</div>
+            <div class="letter-option" style="background-color: #95a5a6;" onclick="selectOption('alphabet', 6, false, 'i', this)">i</div>
+        </div>
+        <p class="feedback" id="alphabet-feedback-6"></p>
+    </div>
+
+    <!-- Slide 7: Letter G -->
+    <div class="slide" id="alphabet-slide-7">
+        <img src="images/question.png" alt="Question" class="question-image">
+        <h2>Letter G</h2>
+        <div class="letter-options">
+            <div class="letter-option" style="background-color: #e74c3c;" onclick="selectOption('alphabet', 7, false, 'a', this)">a</div>
+            <div class="letter-option" style="background-color: #3498db;" onclick="selectOption('alphabet', 7, false, 'b', this)">b</div>
+            <div class="letter-option" style="background-color: #2ecc71;" onclick="selectOption('alphabet', 7, false, 'c', this)">c</div>
+            <div class="letter-option" style="background-color: #f1c40f;" onclick="selectOption('alphabet', 7, false, 'd', this)">d</div>
+            <div class="letter-option" style="background-color: #9b59b6;" onclick="selectOption('alphabet', 7, false, 'e', this)">e</div>
+            <div class="letter-option" style="background-color: #1abc9c;" onclick="selectOption('alphabet', 7, false, 'f', this)">f</div>
+            <div class="letter-option correct" style="background-color: #e67e22;" onclick="selectOption('alphabet', 7, true, 'g', this)">g</div>
+            <div class="letter-option" style="background-color: #34495e;" onclick="selectOption('alphabet', 7, false, 'h', this)">h</div>
+            <div class="letter-option" style="background-color: #95a5a6;" onclick="selectOption('alphabet', 7, false, 'i', this)">i</div>
+        </div>
+        <p class="feedback" id="alphabet-feedback-7"></p>
+    </div>
+
+    <!-- Slide 8: Letter H -->
+    <div class="slide" id="alphabet-slide-8">
+        <img src="images/question.png" alt="Question" class="question-image">
+        <h2>Letter H</h2>
+        <div class="letter-options">
+            <div class="letter-option" style="background-color: #e74c3c;" onclick="selectOption('alphabet', 8, false, 'a', this)">a</div>
+            <div class="letter-option" style="background-color: #3498db;" onclick="selectOption('alphabet', 8, false, 'b', this)">b</div>
+            <div class="letter-option" style="background-color: #2ecc71;" onclick="selectOption('alphabet', 8, false, 'c', this)">c</div>
+            <div class="letter-option" style="background-color: #f1c40f;" onclick="selectOption('alphabet', 8, false, 'd', this)">d</div>
+            <div class="letter-option" style="background-color: #9b59b6;" onclick="selectOption('alphabet', 8, false, 'e', this)">e</div>
+            <div class="letter-option" style="background-color: #1abc9c;" onclick="selectOption('alphabet', 8, false, 'f', this)">f</div>
+            <div class="letter-option" style="background-color: #e67e22;" onclick="selectOption('alphabet', 8, false, 'g', this)">g</div>
+            <div class="letter-option correct" style="background-color: #34495e;" onclick="selectOption('alphabet', 8, true, 'h', this)">h</div>
+            <div class="letter-option" style="background-color: #95a5a6;" onclick="selectOption('alphabet', 8, false, 'i', this)">i</div>
+        </div>
+        <p class="feedback" id="alphabet-feedback-8"></p>
+    </div>
+
+    <!-- Slide 9: Letter I -->
+    <div class="slide" id="alphabet-slide-9">
+        <img src="images/question.png" alt="Question" class="question-image">
+        <h2>Letter I</h2>
+        <div class="letter-options">
+            <div class="letter-option" style="background-color: #e74c3c;" onclick="selectOption('alphabet', 9, false, 'a', this)">a</div>
+            <div class="letter-option" style="background-color: #3498db;" onclick="selectOption('alphabet', 9, false, 'b', this)">b</div>
+            <div class="letter-option" style="background-color: #2ecc71;" onclick="selectOption('alphabet', 9, false, 'c', this)">c</div>
+            <div class="letter-option" style="background-color: #f1c40f;" onclick="selectOption('alphabet', 9, false, 'd', this)">d</div>
+            <div class="letter-option" style="background-color: #9b59b6;" onclick="selectOption('alphabet', 9, false, 'e', this)">e</div>
+            <div class="letter-option" style="background-color: #1abc9c;" onclick="selectOption('alphabet', 9, false, 'f', this)">f</div>
+            <div class="letter-option" style="background-color: #e67e22;" onclick="selectOption('alphabet', 9, false, 'g', this)">g</div>
+            <div class="letter-option" style="background-color: #34495e;" onclick="selectOption('alphabet', 9, false, 'h', this)">h</div>
+            <div class="letter-option correct" style="background-color: #95a5a6;" onclick="selectOption('alphabet', 9, true, 'i', this)">i</div>
+        </div>
+        <p class="feedback" id="alphabet-feedback-9"></p>
+    </div>
+
+    <!-- Final Slide -->
+    <div class="slide final-slide" id="alphabet-final-slide">
+        <h2>Job Well Done!</h2>
+        <img src="images/success.png" alt="Congratulations" class="congrats-image">
+        <button class="color-button" onclick="selectLesson('alphabet')">Restart Lesson</button>
+    </div>
+</div>
+
+
+            <!-- Emotions Slides -->
+            <div class="lesson" id="emotions" style="display: none;">
+                <!-- Slide 1: Happy -->
+                <div class="slide" id="emotions-slide-1">
+                    <img src="images/question.png" alt="Question" class="question-image">
+                    <h2>Which person is Happy?</h2>
+                    <div class="images-container">
+                        <img src="images/happy.webp" alt="Happy" class="option correct" onclick="selectOption('emotions', 1, true, 'Happy', this)">
+                        <img src="images/sad.webp" alt="Sad" class="option" onclick="selectOption('emotions', 1, false, 'Sad', this)">
+                        <img src="images/surprised.webp" alt="Surprised" class="option" onclick="selectOption('emotions', 1, false, 'Surprised', this)">
+                        <img src="images/excited.webp" alt="Excited" class="option" onclick="selectOption('emotions', 1, false, 'Excited', this)">
+                        <img src="images/tired.webp" alt="Tired" class="option" onclick="selectOption('emotions', 1, false, 'Tired', this)">
+        
+                    </div>
+                    <p class="feedback" id="emotions-feedback-1"></p>
+                </div>
+
+                <!-- Slide 2: Sad -->
+                <div class="slide" id="emotions-slide-2">
+                    <img src="images/question.png" alt="Question" class="question-image">
+                    <h2>Which person is Sad?</h2>
+                    <div class="images-container">
+                        <img src="images/happy.webp" alt="Happy" class="option" onclick="selectOption('emotions', 2, false, 'Happy', this)">
+                        <img src="images/sad.webp" alt="Sad" class="option correct" onclick="selectOption('emotions', 2, true, 'Sad', this)">
+                        <img src="images/surprised.webp" alt="Surprised" class="option" onclick="selectOption('emotions', 2, false, 'Surprised', this)">
+                        <img src="images/excited.webp" alt="Excited" class="option" onclick="selectOption('emotions', 2, false, 'Excited', this)">
+                        <img src="images/tired.webp" alt="Tired" class="option" onclick="selectOption('emotions', 2, false, 'Tired', this)">
+                       
+                    </div>
+                    <p class="feedback" id="emotions-feedback-2"></p>
+                </div>
+
+                <!-- Slide 3: Surprised -->
+                <div class="slide" id="emotions-slide-3">
+                    <img src="images/question.png" alt="Question" class="question-image">
+                    <h2>Which person is Surprised?</h2>
+                    <div class="images-container">
+                        <img src="images/happy.webp" alt="Happy" class="option" onclick="selectOption('emotions', 3, false, 'Happy', this)">
+                        <img src="images/sad.webp" alt="Sad" class="option" onclick="selectOption('emotions', 3, false, 'Sad', this)">
+                        <img src="images/surprised.webp" alt="Surprised" class="option correct" onclick="selectOption('emotions', 3, true, 'Surprised', this)">
+                        <img src="images/excited.webp" alt="Excited" class="option" onclick="selectOption('emotions', 3, false, 'Excited', this)">
+                        <img src="images/tired.webp" alt="Tired" class="option" onclick="selectOption('emotions', 3, false, 'Tired', this)">
+             
+                    </div>
+                    <p class="feedback" id="emotions-feedback-3"></p>
+                </div>
+
+                <!-- Slide 4: Excited -->
+                <div class="slide" id="emotions-slide-4">
+                    <img src="images/question.png" alt="Question" class="question-image">
+                    <h2>Which person is Excited?</h2>
+                    <div class="images-container">
+                        <img src="images/happy.webp" alt="Happy" class="option" onclick="selectOption('emotions', 4, false, 'Happy', this)">
+                        <img src="images/sad.webp" alt="Sad" class="option" onclick="selectOption('emotions', 4, false, 'Sad', this)">
+                        <img src="images/surprised.webp" alt="Surprised" class="option" onclick="selectOption('emotions', 4, false, 'Surprised', this)">
+                        <img src="images/excited.webp" alt="Excited" class="option correct" onclick="selectOption('emotions', 4, true, 'Excited', this)">
+                        <img src="images/tired.webp" alt="Tired" class="option" onclick="selectOption('emotions', 4, false, 'Tired', this)">
+                 
+                    </div>
+                    <p class="feedback" id="emotions-feedback-4"></p>
+                </div>
+
+                <!-- Slide 5: Tired -->
+                <div class="slide" id="emotions-slide-5">
+                    <img src="images/question.png" alt="Question" class="question-image">
+                    <h2>Which person is Tired?</h2>
+                    <div class="images-container">
+                        <img src="images/happy.webp" alt="Happy" class="option" onclick="selectOption('emotions', 5, false, 'Happy', this)">
+                        <img src="images/sad.webp" alt="Sad" class="option" onclick="selectOption('emotions', 5, false, 'Sad', this)">
+                        <img src="images/surprised.webp" alt="Surprised" class="option" onclick="selectOption('emotions', 5, false, 'Surprised', this)">
+                        <img src="images/excited.webp" alt="Excited" class="option" onclick="selectOption('emotions', 5, false, 'Excited', this)">
+                        <img src="images/tired.webp" alt="Tired" class="option correct" onclick="selectOption('emotions', 5, true, 'Tired', this)">
+                       </div>
+                    <p class="feedback" id="emotions-feedback-5"></p>
+                </div>
+
+                <!-- Final Slide -->
+                <div class="slide final-slide" id="emotions-final-slide">
+                    <h2>Job Well Done!</h2>
+                    <img src="images/success.png" alt="Congratulations" class="congrats-image">
+                    <button class="color-button" onclick="selectLesson('emotions')">Restart Lesson</button>
+                </div>
+            </div>
+
+            <!-- Additional Lessons (Colors, Numbers, Shapes, Alphabet) Follow Similar Structure -->
+            <!-- For brevity, only Fruits, Vegetables, Animals, and Emotions are fully expanded here -->
+            <!-- Ensure that each lesson has 9 slides for Fruits, and appropriate slides for other lessons -->
+
+            <!-- Vehicles Slides -->
+<div class="lesson" id="vehicles" style="display: none;">
+    <!-- Slide 1: Choose the Car -->
+    <div class="slide" id="vehicles-slide-1">
+        <img src="images/question.png" alt="Question" class="question-image">
+        <h2>Choose the Car</h2>
+        <div class="images-container">
+            <img src="images/car.webp" alt="Car" class="option correct" onclick="selectOption('vehicles', 1, true, 'Car', this)">
+            <img src="images/train.webp" alt="Train" class="option" onclick="selectOption('vehicles', 1, false, 'Train', this)">
+            <img src="images/aeroplane.webp" alt="Aeroplane" class="option" onclick="selectOption('vehicles', 1, false, 'Aeroplane', this)">
+            <img src="images/bike.webp" alt="Bike" class="option" onclick="selectOption('vehicles', 1, false, 'Bike', this)">
+            <img src="images/helicopter.webp" alt="Helicopter" class="option" onclick="selectOption('vehicles', 1, false, 'Helicopter', this)">
+            <!-- Add more incorrect options if desired -->
+        </div>
+        <p class="feedback" id="vehicles-feedback-1"></p>
+    </div>
+
+    <!-- Slide 2: Choose the Train -->
+    <div class="slide" id="vehicles-slide-2">
+        <img src="images/question.png" alt="Question" class="question-image">
+        <h2>Choose the Train</h2>
+        <div class="images-container">
+            <img src="images/car.webp" alt="Car" class="option" onclick="selectOption('vehicles', 2, false, 'Car', this)">
+            <img src="images/train.webp" alt="Train" class="option correct" onclick="selectOption('vehicles', 2, true, 'Train', this)">
+            <img src="images/aeroplane.webp" alt="Aeroplane" class="option" onclick="selectOption('vehicles', 2, false, 'Aeroplane', this)">
+            <img src="images/bike.webp" alt="Bike" class="option" onclick="selectOption('vehicles', 2, false, 'Bike', this)">
+            <img src="images/helicopter.webp" alt="Helicopter" class="option" onclick="selectOption('vehicles', 2, false, 'Helicopter', this)">
+            <!-- Add more incorrect options if desired -->
+        </div>
+        <p class="feedback" id="vehicles-feedback-2"></p>
+    </div>
+
+    <!-- Slide 3: Choose the Aeroplane -->
+    <div class="slide" id="vehicles-slide-3">
+        <img src="images/question.png" alt="Question" class="question-image">
+        <h2>Choose the Aeroplane</h2>
+        <div class="images-container">
+            <img src="images/car.webp" alt="Car" class="option" onclick="selectOption('vehicles', 3, false, 'Car', this)">
+            <img src="images/train.webp" alt="Train" class="option" onclick="selectOption('vehicles', 3, false, 'Train', this)">
+            <img src="images/aeroplane.webp" alt="Aeroplane" class="option correct" onclick="selectOption('vehicles', 3, true, 'Aeroplane', this)">
+            <img src="images/bike.webp" alt="Bike" class="option" onclick="selectOption('vehicles', 3, false, 'Bike', this)">
+            <img src="images/helicopter.webp" alt="Helicopter" class="option" onclick="selectOption('vehicles', 3, false, 'Helicopter', this)">
+            <!-- Add more incorrect options if desired -->
+        </div>
+        <p class="feedback" id="vehicles-feedback-3"></p>
+    </div>
+
+    <!-- Slide 4: Choose the Bike -->
+    <div class="slide" id="vehicles-slide-4">
+        <img src="images/question.png" alt="Question" class="question-image">
+        <h2>Choose the Bike</h2>
+        <div class="images-container">
+            <img src="images/car.webp" alt="Car" class="option" onclick="selectOption('vehicles', 4, false, 'Car', this)">
+            <img src="images/train.webp" alt="Train" class="option" onclick="selectOption('vehicles', 4, false, 'Train', this)">
+            <img src="images/aeroplane.webp" alt="Aeroplane" class="option" onclick="selectOption('vehicles', 4, false, 'Aeroplane', this)">
+            <img src="images/bike.webp" alt="Bike" class="option correct" onclick="selectOption('vehicles', 4, true, 'Bike', this)">
+            <img src="images/helicopter.webp" alt="Helicopter" class="option" onclick="selectOption('vehicles', 4, false, 'Helicopter', this)">
+            <!-- Add more incorrect options if desired -->
+        </div>
+        <p class="feedback" id="vehicles-feedback-4"></p>
+    </div>
+
+    <!-- Slide 5: Choose the Helicopter -->
+    <div class="slide" id="vehicles-slide-5">
+        <img src="images/question.png" alt="Question" class="question-image">
+        <h2>Choose the Helicopter</h2>
+        <div class="images-container">
+            <img src="images/car.webp" alt="Car" class="option" onclick="selectOption('vehicles', 5, false, 'Car', this)">
+            <img src="images/train.webp" alt="Train" class="option" onclick="selectOption('vehicles', 5, false, 'Train', this)">
+            <img src="images/aeroplane.webp" alt="Aeroplane" class="option" onclick="selectOption('vehicles', 5, false, 'Aeroplane', this)">
+            <img src="images/bike.webp" alt="Bike" class="option" onclick="selectOption('vehicles', 5, false, 'Bike', this)">
+            <img src="images/helicopter.webp" alt="Helicopter" class="option correct" onclick="selectOption('vehicles', 5, true, 'Helicopter', this)">
+            <!-- Add more incorrect options if desired -->
+        </div>
+        <p class="feedback" id="vehicles-feedback-5"></p>
+    </div>
+
+    <!-- Final Slide -->
+    <div class="slide final-slide" id="vehicles-final-slide">
+        <h2>Job Well Done!</h2>
+        <img src="images/success.png" alt="Congratulations" class="congrats-image">
+        <button class="color-button" onclick="selectLesson('vehicles')">Restart Lesson</button>
+    </div>
+</div>
+
+        </div>
+
+        <!-- Text-to-Speech and Quiz Script -->
+     <script>
+    // Initialize progress tracking for each lesson
+    const lessonProgress = {};
+
+    // Function to initialize progress for a lesson
+    function initializeProgress(lesson) {
+        const lessonContainer = document.getElementById(lesson);
+        const totalCorrectOptions = lessonContainer.querySelectorAll(`.option.correct, .letter-option.correct, .color-block.correct, .number-options button.correct, .svg-shape.correct`).length;
+        lessonProgress[lesson] = {
+            total: totalCorrectOptions,
+            correct: 0
+        };
+    }
+
+    // Function to speak text using Web Speech API
+    function speak(text) {
+        if ('speechSynthesis' in window) {
+            const utterance = new SpeechSynthesisUtterance(text);
+            utterance.rate = 1; // Adjust as needed
+            utterance.pitch = 1; // Adjust as needed
+            speechSynthesis.speak(utterance);
+        } else {
+            console.warn('Speech Synthesis not supported in this browser.');
+        }
+    }
+
+function selectOption(lesson, slideNumber, isCorrect, word, element) {
+    console.log(`Lesson: ${lesson}, Slide: ${slideNumber}, Correct: ${isCorrect}, Word: ${word}`);
+    const feedbackElement = document.getElementById(`${lesson}-feedback-${slideNumber}`);
+    const currentSlide = document.getElementById(`${lesson}-slide-${slideNumber}`);
+
+    // Prevent multiple selections
+    if (currentSlide.classList.contains('disabled')) {
+        return;
+    }
+
+    if (isCorrect) {
+        feedbackElement.textContent = "Correct!";
+        feedbackElement.style.color = "green";
+        if (element) {
+            element.classList.add('selected-correct');
+        }
+        speak(word);
+        disableOptions(currentSlide);
+
+        // Move to next slide after a delay
+        setTimeout(() => {
+            showNextSlide(lesson, slideNumber);
+        }, 1500);
+    } else {
+        feedbackElement.textContent = "Try Again!";
+        feedbackElement.style.color = "red";
+    }
+}
+
+
+    // Function to disable all options on the current slide
+    function disableOptions(slide) {
+        const options = slide.querySelectorAll('.option, .letter-option, .color-block, .number-options button, .svg-shape');
+        options.forEach(option => {
+            option.classList.add('disabled');
+        });
+        // Optionally, add a class to indicate the slide is processed
+        slide.classList.add('disabled');
+    }
+
+    // Function to show the next slide dynamically based on the number of slides available
+function showNextSlide(lesson, currentSlideNumber) {
+    console.log(`Showing next slide for lesson: ${lesson}, after slide: ${currentSlideNumber}`);
+    const currentSlide = document.getElementById(`${lesson}-slide-${currentSlideNumber}`);
+    if (currentSlide) {
+        currentSlide.style.display = "none";
+    }
+
+    const nextSlideNumber = currentSlideNumber + 1;
+    console.log(`Next slide number: ${nextSlideNumber}`);
+
+    const nextSlide = document.getElementById(`${lesson}-slide-${nextSlideNumber}`);
+    if (nextSlide) {
+        nextSlide.style.display = "block";
+        console.log(`Displaying slide: ${nextSlide.id}`);
+    } else {
+        // No more slides, show final slide
+        const finalSlide = document.getElementById(`${lesson}-final-slide`);
+        if (finalSlide) {
+            finalSlide.style.display = "block";
+            console.log(`Displaying final slide: ${finalSlide.id}`);
+            speak("Job Well Done!");
+        }
+    }
+}
+
+    // Function to handle manual 'Next' button clicks (used in lessons like Colors)
+    function showNextSlideManual(lesson, currentSlideNumber) {
+        console.log(`Manual Next clicked for lesson: ${lesson}, current slide: ${currentSlideNumber}`);
+        const currentSlide = document.getElementById(`${lesson}-slide-${currentSlideNumber}`);
+        if (currentSlide) {
+            currentSlide.style.display = "none";
+        }
+
+        const nextSlideNumber = currentSlideNumber + 1;
+        console.log(`Next slide number: ${nextSlideNumber}`);
+
+        const nextSlide = document.getElementById(`${lesson}-slide-${nextSlideNumber}`);
+        if (nextSlide) {
+            nextSlide.style.display = "block";
+            console.log(`Displaying slide: ${nextSlide.id}`);
+        } else {
+            const finalSlide = document.getElementById(`${lesson}-final-slide`);
+            if (finalSlide) {
+                finalSlide.style.display = "block";
+                console.log(`Displaying final slide: ${finalSlide.id}`);
+                speak("Job Well Done!");
+            }
+        }
+    }
+
+    // Function to select and display a lesson
+    function selectLesson(lesson) {
+        console.log('Selecting lesson:', lesson);
+
+        // Hide all lessons
+        const lessons = document.querySelectorAll('.lesson');
+        lessons.forEach(l => {
+            l.style.display = "none";
+            // Reset all slides within each lesson
+            const slides = l.querySelectorAll('.slide');
+            slides.forEach((slide) => {
+                slide.style.display = "none";
+                slide.classList.remove('disabled'); // Remove disabled state
+                const feedback = slide.querySelector('.feedback');
+                if (feedback) {
+                    feedback.textContent = "";
+                    feedback.style.color = "red";
+                }
+                // Remove 'selected-correct' class from options
+                const options = slide.querySelectorAll('.option, .letter-option, .color-block, .number-options button, .svg-shape');
+                options.forEach(option => {
+                    option.classList.remove('selected-correct', 'disabled');
+                });
+            });
+        });
+
+        // Show the selected lesson
+        const selectedLesson = document.getElementById(lesson);
+        if (selectedLesson) {
+            selectedLesson.style.display = "block";
+            console.log('Lesson found:', lesson);
+
+            // Initialize or reset progress for the lesson
+            initializeProgress(lesson);
+            lessonProgress[lesson].correct = 0;
+
+            // Show the first slide of the selected lesson
+            const firstSlide = selectedLesson.querySelector('.slide');
+            if (firstSlide) {
+                firstSlide.style.display = "block";
+                console.log('Displaying first slide:', firstSlide.id);
+            }
+        } else {
+            console.error('Lesson not found:', lesson);
+        }
+
+        // Update active state in sidebar
+        const buttons = document.querySelectorAll('.lesson-button');
+        buttons.forEach(button => {
+            if (button.textContent.toLowerCase() === lesson.toLowerCase()) {
+                button.classList.add('active');
+            } else {
+                button.classList.remove('active');
+            }
+        });
+    }
+
+    // Initialize the quiz by selecting the first lesson on page load
+    document.addEventListener("DOMContentLoaded", function() {
+        selectLesson('animals'); // Automatically select 'Fruits' on page load
+    });
+</script>
+
+    </div>
+</body>
+</html>

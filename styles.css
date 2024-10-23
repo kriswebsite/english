@@ -1,0 +1,221 @@
+/* Reset some basic styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f0f8ff;
+    display: flex; /* Enable flex layout for sidebar and main content */
+    min-height: 100vh;
+    margin: 0;
+    padding: 0;
+}
+
+/* Sidebar Styles */
+.sidebar {
+    width: 200px;
+    background-color: #2c3e50;
+    color: #ecf0f1;
+    padding: 20px;
+    flex-shrink: 0; /* Prevent sidebar from shrinking */
+}
+
+.sidebar h2 {
+    margin-bottom: 20px;
+    text-align: center;
+    font-size: 1.5em;
+}
+
+.sidebar ul {
+    list-style: none;
+}
+
+.sidebar li {
+    margin-bottom: 15px;
+}
+
+.lesson-button {
+    width: 100%;
+    padding: 10px;
+    background-color: #34495e;
+    border: none;
+    color: #ecf0f1;
+    cursor: pointer;
+    border-radius: 5px;
+    transition: background-color 0.3s;
+    font-size: 1em;
+}
+
+.lesson-button:hover {
+    background-color: #3d566e;
+}
+
+.lesson-button.active {
+    background-color: #1abc9c;
+}
+
+/* Main Content Styles */
+.main-content {
+    flex: 1; /* Take up remaining space */
+    padding: 20px;
+    background-color: #ecf0f1;
+    overflow-y: auto;
+}
+
+/* Quiz Container */
+.quiz-container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+/* Slide Styles */
+.slide {
+    display: none; /* All slides are hidden by default */
+}
+
+.slide.active {
+    display: block;
+}
+
+h2 {
+    color: #333;
+    margin-bottom: 20px;
+}
+
+.images-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    margin: 20px 0;
+}
+
+.option {
+    width: 150px;
+    height: 150px;
+    margin: 10px;
+    border: 2px solid #ddd;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: transform 0.2s, border-color 0.2s;
+}
+
+.option:hover {
+    transform: scale(1.05);
+    border-color: #333;
+}
+
+.feedback {
+    color: red;
+    font-weight: bold;
+    height: 20px;
+    margin-top: 10px;
+}
+
+/* Question Image Styling */
+.question-image {
+    width: 100px; /* Adjust the size as needed */
+    height: auto;
+    margin-bottom: 20px;
+}
+
+/* Success Overlay Styling */
+.success-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(255, 255, 255, 0.8);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    display: none; /* Hidden by default */
+}
+
+.success-overlay img {
+    width: 150px; /* Adjust size as needed */
+    height: auto;
+}
+
+.congrats-image {
+    width: 300px;
+    height: auto;
+    margin-top: 20px;
+}
+
+/* Responsive Design Adjustments */
+@media (max-width: 768px) {
+    body {
+        flex-direction: column;
+    }
+
+    .sidebar {
+        width: 100%;
+        display: flex;
+        justify-content: center;
+    }
+
+    .sidebar ul {
+        display: flex;
+        flex-direction: row;
+        padding: 0;
+    }
+
+    .sidebar li {
+        margin: 0 10px;
+    }
+
+    .lesson-button {
+        font-size: 0.9em;
+        padding: 8px;
+    }
+
+    .quiz-container {
+        max-width: 100%;
+        padding: 10px;
+    }
+
+    .images-container {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .option {
+        width: 120px;
+        height: 120px;
+        margin: 8px;
+    }
+
+    .question-image {
+        width: 80px;
+    }
+
+    .congrats-image {
+        width: 200px;
+    }
+}
+
+@media (max-width: 600px) {
+    .option {
+        width: 100px;
+        height: 100px;
+        margin: 5px;
+    }
+
+    .question-image {
+        width: 80px;
+    }
+
+    .success-overlay img {
+        width: 100px;
+    }
+
+    .congrats-image {
+        width: 200px;
+    }
+}
